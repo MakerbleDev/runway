@@ -1,0 +1,2726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Makerble Runway — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1D9E75;--green-d:#0F6E56;--green-l:#E1F5EE;
+  --amber:#F59E0B;--amber-l:#FEF3C7;
+  --navy:#2d3748;
+  --gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;--gray-300:#D1D5DB;
+  --gray-500:#6B7280;--gray-700:#374151;--gray-900:#111827;
+  --purple:#534AB7;--purple-l:#EEEDFE;
+  --red:#DC2626;--red-l:#FEF2F2;
+  --font:'Quicksand',sans-serif;
+  --r-sm:6px;--r-md:8px;--r-lg:12px;--r-xl:16px;
+  --shadow:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,0.07),0 2px 4px rgba(0,0,0,0.06);
+}
+body{font-family:var(--font);font-size:14px;background:var(--gray-50);color:var(--gray-900);min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:var(--navy);height:52px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.tb-left{display:flex;align-items:center;gap:10px;cursor:pointer}
+.tb-shield{width:30px;height:30px;object-fit:contain}
+.tb-title{font-weight:700;font-size:15px;color:#fff;letter-spacing:-0.2px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-nav{display:flex;gap:4px}
+.tb-nav-btn{background:none;border:none;color:rgba(255,255,255,0.65);font-family:var(--font);font-size:13px;font-weight:500;padding:6px 10px;border-radius:var(--r-md);cursor:pointer}
+.tb-nav-btn:hover,.tb-nav-btn.active{background:rgba(255,255,255,0.12);color:#fff}
+.tb-user{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.85);font-size:13px}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.tag-green{background:var(--green-l);color:var(--green-d)}
+.tag-purple{background:var(--purple-l);color:var(--purple)}
+.tag-gray{background:var(--gray-100);color:var(--gray-500)}
+.tag-amber{background:var(--amber-l);color:#92400E}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r-md);border:1px solid var(--gray-300);background:#fff;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.12s}
+.btn:hover{background:var(--gray-50)}
+.btn-primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-d)}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-light{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff}
+.btn-light:hover{background:rgba(255,255,255,0.25)}
+.btn-ghost{background:none;border:none;color:var(--gray-500);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:var(--r-sm)}
+.btn-ghost:hover{background:var(--gray-100);color:var(--gray-900)}
+
+/* LAYOUT */
+.screen{display:none;min-height:calc(100vh - 52px)}
+.screen.active{display:block}
+.main{max-width:1200px;margin:0 auto;padding:28px 24px}
+.main-wide{max-width:1400px;margin:0 auto;padding:28px 24px}
+.nav-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--gray-500);background:none;border:none;cursor:pointer;margin-bottom:20px;font-family:var(--font);padding:0}
+.nav-back:hover{color:var(--gray-900)}
+.page-title{font-size:22px;font-weight:700;margin-bottom:4px;letter-spacing:-0.3px}
+.page-sub{font-size:13px;color:var(--gray-500)}
+.page-header{margin-bottom:28px}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+
+/* ORG / PROG CARDS */
+.org-card,.prog-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:18px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow)}
+.org-card:hover,.prog-card:hover{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,0.1),var(--shadow-md)}
+.prog-card{display:flex;align-items:flex-start;gap:14px}
+.org-logo,.prog-logo{border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.org-logo{width:52px;height:52px;background:var(--green-l);color:var(--green-d);margin-bottom:14px}
+.prog-logo{width:44px;height:44px;background:var(--purple-l);color:var(--purple);flex-shrink:0;font-size:13px}
+.org-logo img,.prog-logo img{width:100%;height:100%;object-fit:contain}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.section-hdr h2{font-size:16px;font-weight:700}
+
+/* PROGRESS BAR */
+.prog-bar{height:8px;border-radius:4px;overflow:hidden;display:flex;background:var(--gray-200)}
+.prog-bar-seg{height:100%;transition:width 0.4s ease}
+.prog-bar-wrap{margin-top:10px}
+.prog-bar-labels{display:flex;gap:12px;margin-top:5px}
+.prog-bar-label{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gray-500)}
+.prog-bar-dot{width:8px;height:8px;border-radius:50%}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--gray-200);margin-bottom:24px;gap:0}
+.tab{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--gray-500);border-bottom:2px solid transparent;margin-bottom:-1px;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font);transition:color 0.12s}
+.tab:hover:not(.active){color:var(--gray-900)}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.subtabs{display:flex;gap:4px;margin-bottom:20px}
+.subtab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--gray-200);background:#fff;color:var(--gray-500);font-family:var(--font)}
+.subtab.active{background:var(--green);border-color:var(--green);color:#fff}
+
+/* PHASE / STEP STRUCTURE */
+.phase-block{margin-bottom:28px}
+.phase-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray-500);margin-bottom:10px;padding:0 2px}
+.step-row{border:1px solid var(--gray-200);border-radius:var(--r-lg);background:#fff;margin-bottom:8px;overflow:hidden;transition:border-color 0.15s;box-shadow:var(--shadow)}
+.step-row.expanded{border-color:var(--green)}
+.step-hdr{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;user-select:none}
+.step-hdr:hover{background:var(--gray-50)}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--gray-100);color:var(--gray-500);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.step-row.expanded .step-num{background:var(--green);color:#fff}
+.step-title{font-weight:700;font-size:14px;flex:1}
+.step-meta{display:flex;align-items:center;gap:8px}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.status-ns{background:var(--gray-100);color:var(--gray-500)}
+.status-ip{background:var(--amber-l);color:#92400E}
+.status-done{background:var(--green-l);color:var(--green-d)}
+.step-chevron{color:var(--gray-400);font-size:16px;transition:transform 0.2s}
+.step-row.expanded .step-chevron{transform:rotate(180deg)}
+.step-understanding{font-size:11px;color:var(--gray-500);font-weight:600}
+.step-body{padding:0 18px 18px;display:none}
+.step-row.expanded .step-body{display:block}
+
+/* STEP TABS */
+.step-tabs{display:flex;border-bottom:1px solid var(--gray-200);margin-bottom:20px;gap:0}
+.step-tab{padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-500);border-bottom:2px solid transparent;margin-bottom:-1px;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font)}
+.step-tab:hover:not(.active){color:var(--gray-900)}
+.step-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.step-tab-content{display:none}
+.step-tab-content.active{display:block}
+
+/* KEY DECISION */
+.decision-box{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r-md);padding:16px;margin-bottom:16px}
+.decision-prompt{font-size:13px;font-weight:700;color:var(--gray-700);margin-bottom:10px}
+.decision-input{width:100%;border:1px solid var(--gray-300);border-radius:var(--r-md);padding:10px;font-size:13px;font-family:var(--font);min-height:80px;resize:vertical}
+.decision-input:focus{outline:none;border-color:var(--green)}
+.decision-confirmed{background:var(--green-l);border:1px solid var(--green);border-radius:var(--r-md);padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--green-d);font-weight:600}
+
+/* CONCEPT TILES */
+.concepts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.concept-tile{width:100%;aspect-ratio:1;position:relative;cursor:pointer;perspective:1000px}
+.concept-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s cubic-bezier(0.4,0,0.2,1)}
+.concept-tile.flipped .concept-inner{transform:rotateY(180deg)}
+.concept-face{position:absolute;inset:0;border-radius:var(--r-lg);backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.concept-front{background:var(--gray-200);border:1px solid var(--gray-200)}
+.concept-front img{width:100%;height:70%;object-fit:cover}
+.concept-front-label{padding:10px;font-size:12px;font-weight:700;color:var(--gray-900);line-height:1.3}
+.concept-understood-badge{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;opacity:0;transition:opacity 0.2s}
+.concept-tile.understood .concept-understood-badge{opacity:1}
+.concept-back{background:#fff;border:1px solid var(--gray-200);transform:rotateY(180deg);padding:14px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;box-shadow:var(--shadow-md)}
+.concept-back-title{font-size:13px;font-weight:700;color:var(--gray-900)}
+.concept-back-desc{font-size:11px;color:var(--gray-600);line-height:1.5;flex:1}
+.concept-back-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.btn-understood{background:var(--green);border:none;color:#fff;padding:5px 10px;border-radius:var(--r-sm);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all 0.15s}
+.btn-understood.done{background:var(--green-d)}
+.btn-learn-more{background:none;border:1px solid var(--gray-300);color:var(--gray-700);padding:5px 10px;border-radius:var(--r-sm);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.confetti-burst{position:fixed;pointer-events:none;z-index:9999;font-size:28px;animation:confetti-fly 1s ease-out forwards}
+@keyframes confetti-fly{0%{transform:scale(0) rotate(0);opacity:1}100%{transform:scale(2.5) rotate(20deg) translateY(-60px);opacity:0}}
+
+/* CHECKLIST */
+.checklist-soft-lock{background:var(--amber-l);border:1px solid #FCD34D;border-radius:var(--r-md);padding:10px 14px;font-size:12px;color:#92400E;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.checklist-item{border:1px solid var(--gray-200);border-radius:var(--r-md);padding:14px;margin-bottom:10px;background:#fff}
+.checklist-item.discuss{border-color:var(--amber);background:var(--amber-l)}
+.checklist-q{font-size:13px;font-weight:700;margin-bottom:4px}
+.checklist-why{font-size:11px;color:var(--gray-500);margin-bottom:10px;line-height:1.4}
+.checklist-why span{font-weight:700;color:var(--gray-700)}
+.checklist-answers{display:flex;gap:6px;flex-wrap:wrap}
+.checklist-answer-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--gray-300);background:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all 0.12s}
+.checklist-answer-btn:hover{border-color:var(--gray-400)}
+.checklist-answer-btn.selected-yes{background:var(--green-l);border-color:var(--green);color:var(--green-d)}
+.checklist-answer-btn.selected-no{background:var(--red-l);border-color:var(--red);color:var(--red)}
+.checklist-answer-btn.selected-nr{background:var(--gray-100);border-color:var(--gray-400);color:var(--gray-700)}
+.checklist-answer-btn.selected-discuss{background:var(--amber-l);border-color:var(--amber);color:#92400E}
+
+/* STAGES GRID (workbench) */
+.stages-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;overflow-x:auto;min-width:0}
+.stage-col{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-md);overflow:hidden;min-width:120px}
+.stage-head{padding:12px 8px;text-align:center;border-bottom:1px solid var(--gray-200)}
+.stage-icon{width:44px;height:44px;object-fit:contain;display:block;margin:0 auto 6px}
+.stage-lbl{font-size:10px;font-weight:700;margin-bottom:2px}
+.stage-desc-txt{font-size:9px;color:var(--gray-500);line-height:1.4}
+.stage-desc-txt b{font-weight:700;color:var(--gray-700)}
+.stage-body{padding:8px;min-height:80px}
+.stage-item{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:6px 8px;margin-bottom:6px;font-size:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:4px;line-height:1.4}
+.stage-item-del{background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:11px}
+.stage-item-del:hover{color:var(--red)}
+.add-item-btn{width:100%;background:none;border:1px dashed var(--gray-300);border-radius:6px;padding:5px;font-size:10px;color:var(--gray-400);cursor:pointer;font-family:var(--font)}
+.add-item-btn:hover{border-color:var(--green);color:var(--green)}
+
+/* DATA COLLECTION TABLE */
+.dc-table{width:100%;border-collapse:collapse;font-size:13px}
+.dc-table th{text-align:left;padding:8px 12px;border-bottom:1px solid var(--gray-200);font-size:12px;font-weight:700;color:var(--gray-500)}
+.dc-table td{padding:8px 12px;border-bottom:1px solid var(--gray-100);vertical-align:top}
+.dc-table tr:last-child td{border-bottom:none}
+.dc-table tr:hover td{background:var(--gray-50)}
+.stage-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700}
+.resp-input{border:none;background:transparent;font-size:12px;font-family:var(--font);width:100%;border-bottom:1px solid var(--gray-200);padding:2px;color:var(--gray-900)}
+.resp-input:focus{outline:none;border-bottom-color:var(--green)}
+.file-chip{display:inline-flex;align-items:center;gap:4px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:4px;padding:2px 8px;font-size:11px;color:#1D4ED8;margin:2px}
+.upload-label{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;border:1px dashed var(--gray-300);font-size:11px;color:var(--gray-500);cursor:pointer;margin-top:4px;font-family:var(--font)}
+.upload-label:hover{background:var(--gray-100)}
+
+/* WORKBENCH VIEW TOGGLE */
+.view-toggle{display:flex;gap:0;border:1px solid var(--gray-200);border-radius:var(--r-md);overflow:hidden;background:var(--gray-100)}
+.view-btn{padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:none;font-family:var(--font);color:var(--gray-500)}
+.view-btn.active{background:#fff;color:var(--green);box-shadow:var(--shadow)}
+
+/* WORKBENCH VIEW */
+.wb-section{margin-bottom:28px}
+.wb-section-hdr{font-size:13px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--gray-200)}
+
+/* ORG DASHBOARD */
+.dash-table{width:100%;border-collapse:collapse;font-size:12px}
+.dash-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--gray-200);font-weight:700;color:var(--gray-500);font-size:11px;white-space:nowrap;background:var(--gray-50)}
+.dash-table td{padding:8px 10px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+.dash-table tr:hover td{background:var(--gray-50)}
+.pct-cell{display:inline-flex;align-items:center;justify-content:center;width:44px;height:26px;border-radius:4px;font-size:11px;font-weight:700}
+.status-cell{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap;cursor:pointer}
+
+/* ADMIN */
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-table th{text-align:left;padding:10px 14px;border-bottom:1px solid var(--gray-200);font-weight:700;font-size:12px;color:var(--gray-500);background:var(--gray-50)}
+.admin-table td{padding:10px 14px;border-bottom:1px solid var(--gray-100)}
+.admin-table tr:hover td{background:var(--gray-50)}
+
+/* MEMBER ROW */
+.member-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.member-row:last-child{border-bottom:none}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:500;display:none}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--r-xl);padding:28px;width:480px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal h2{font-size:17px;font-weight:700;margin-bottom:18px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}
+
+/* FORMS */
+.form-row{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:5px}
+.input{width:100%;border:1px solid var(--gray-300);border-radius:var(--r-md);padding:9px 11px;font-size:13px;font-family:var(--font);transition:border-color 0.15s}
+.input:focus{outline:none;border-color:var(--green)}
+.select{width:100%;border:1px solid var(--gray-300);border-radius:var(--r-md);padding:9px 11px;font-size:13px;font-family:var(--font);background:#fff}
+
+/* INFO / ALERT BARS */
+.info-bar{background:var(--green-l);border-radius:var(--r-md);padding:10px 14px;font-size:12px;color:var(--green-d);margin-bottom:16px;display:flex;gap:8px;font-weight:600}
+.warn-bar{background:var(--amber-l);border-radius:var(--r-md);padding:10px 14px;font-size:12px;color:#92400E;margin-bottom:16px;display:flex;gap:8px;font-weight:600}
+
+/* LOGIN */
+.login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:linear-gradient(135deg,#f0fdf9 0%,#e8f4f1 50%,#f7f8fa 100%)}
+.login-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-xl);padding:36px;width:380px;box-shadow:0 8px 32px rgba(29,158,117,0.1)}
+.login-shield{display:block;height:60px;margin:0 auto 20px;object-fit:contain}
+.login-title{text-align:center;font-size:20px;font-weight:700;margin-bottom:4px}
+.login-sub{text-align:center;font-size:13px;color:var(--gray-500);margin-bottom:28px}
+.login-footer-logo{height:28px;object-fit:contain;opacity:0.35}
+
+/* FOOTER */
+.app-footer{display:flex;align-items:center;justify-content:center;padding:16px;border-top:1px solid var(--gray-200);background:#fff;margin-top:auto}
+.app-footer img{height:20px;object-fit:contain;opacity:0.3}
+
+/* NOTES */
+.notes-area{width:100%;min-height:160px;border:1px solid var(--gray-300);border-radius:var(--r-md);padding:12px;font-size:13px;font-family:var(--font);resize:vertical;color:var(--gray-700)}
+.notes-area:focus{outline:none;border-color:var(--green)}
+.internal-notes{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r-md);padding:14px;margin-top:16px}
+.internal-notes-label{font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+
+/* RESOURCES */
+.resource-item{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid var(--gray-200);border-radius:var(--r-md);margin-bottom:8px;background:#fff}
+.resource-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.resource-title{font-size:13px;font-weight:700;color:var(--green);cursor:pointer}
+.resource-title:hover{text-decoration:underline}
+.resource-desc{font-size:12px;color:var(--gray-500);margin-top:2px}
+
+/* STATUS SELECTOR */
+.status-selector{display:flex;gap:6px}
+.status-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--gray-300);background:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all 0.12s}
+.status-btn:hover{border-color:var(--gray-400)}
+.status-btn.active-ns{background:var(--gray-100);border-color:var(--gray-400);color:var(--gray-700)}
+.status-btn.active-ip{background:var(--amber-l);border-color:var(--amber);color:#92400E}
+.status-btn.active-done{background:var(--green-l);border-color:var(--green);color:var(--green-d)}
+
+/* REMINDER RULES */
+.rule-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--gray-200);border-radius:var(--r-md);margin-bottom:8px;background:#fff}
+.rule-days{background:var(--amber-l);color:#92400E;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+
+/* PROTOTYPE NOTICE */
+.proto-notice{background:var(--navy);color:rgba(255,255,255,0.7);text-align:center;padding:6px;font-size:11px;font-weight:600;letter-spacing:0.5px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 20px;color:var(--gray-500)}
+.empty-state-icon{font-size:40px;margin-bottom:12px}
+.empty-state p{font-size:13px}
+
+/* HEALTH TABLE */
+.health-cell{padding:4px 8px;border-radius:4px;font-size:11px;font-weight:700;text-align:center;min-width:36px;display:inline-block}
+/* ═══════════════ NEW WORKBENCH TAB STYLES ═══════════════ */
+
+/* THREE-PANE LAYOUT (1D Content Required) */
+.three-pane{display:grid;grid-template-columns:280px 1fr 320px;gap:0;border:1px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden;height:600px}
+.pane{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--gray-200)}
+.pane:last-child{border-right:none}
+.pane-hdr{padding:12px 14px;background:var(--gray-50);border-bottom:1px solid var(--gray-200);font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.6px;flex-shrink:0}
+.pane-body{flex:1;overflow-y:auto;padding:12px}
+.orig-form-tile{border:1px solid var(--gray-200);border-radius:var(--r-md);margin-bottom:8px;overflow:hidden;background:#fff}
+.orig-form-tile-hdr{padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;font-weight:600}
+.orig-form-tile-hdr:hover{background:var(--gray-50)}
+.orig-form-tile-body{padding:10px 12px;border-top:1px solid var(--gray-100);font-size:11px}
+.orig-form-meta{color:var(--gray-500);margin-bottom:8px}
+.mc-name-chip{display:inline-flex;align-items:center;gap:4px;background:var(--purple-l);color:var(--purple);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600;margin:2px}
+.mc-add-btn{background:none;border:1px dashed var(--green);border-radius:4px;color:var(--green);font-size:11px;font-weight:600;padding:2px 8px;cursor:pointer;font-family:var(--font);margin:2px}
+.mc-add-btn:hover{background:var(--green-l)}
+.viewer-select{width:100%;border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:7px 10px;font-size:12px;font-family:var(--font);margin-bottom:10px;background:#fff}
+.viewer-doc{background:#f8f9fa;border:1px solid var(--gray-200);border-radius:var(--r-md);padding:16px;flex:1;overflow-y:auto;font-size:11px;color:var(--gray-600);line-height:1.7}
+.mc-content-tile{border:1px solid var(--gray-200);border-radius:var(--r-md);padding:12px;margin-bottom:8px;background:#fff}
+.mc-content-tile .form-row{margin-bottom:8px}
+.mc-content-tile .form-label{font-size:11px}
+.mc-content-tile .input,.mc-content-tile .select{font-size:11px;padding:6px 8px}
+
+/* SORTABLE TABLES */
+.wb-table{width:100%;border-collapse:collapse;font-size:12px}
+.wb-table th{padding:9px 10px;border-bottom:2px solid var(--gray-200);font-size:11px;font-weight:700;color:var(--gray-500);text-align:left;background:var(--gray-50);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;z-index:1}
+.wb-table th:hover{background:var(--gray-100);color:var(--gray-900)}
+.wb-table th.sort-asc::after{content:' ↑'}
+.wb-table th.sort-desc::after{content:' ↓'}
+.wb-table td{padding:8px 10px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+.wb-table tr:hover td{background:var(--gray-50)}
+.wb-table .sticky-col{position:sticky;left:0;background:#fff;z-index:1;border-right:1px solid var(--gray-200)}
+.wb-table tr:hover .sticky-col{background:var(--gray-50)}
+.wb-table-wrap{overflow-x:auto;overflow-y:auto;max-height:500px;border:1px solid var(--gray-200);border-radius:var(--r-md)}
+.cb-cell{text-align:center}
+.cb-cell input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--green)}
+.zero-coverage{background:#FEF2F2 !important}
+.zero-coverage .sticky-col{background:#FEF2F2 !important}
+.fix-btn{padding:2px 8px;font-size:10px;font-weight:700;border:1px solid var(--gray-300);border-radius:4px;background:#fff;cursor:pointer;font-family:var(--font);color:var(--gray-500)}
+.fix-btn.has-note{border-color:var(--amber);color:#92400E;background:var(--amber-l)}
+.add-col-btn,.add-row-btn{background:none;border:1px dashed var(--gray-300);border-radius:4px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gray-400);cursor:pointer;font-family:var(--font);white-space:nowrap}
+.add-col-btn:hover,.add-row-btn:hover{border-color:var(--green);color:var(--green)}
+
+/* REPORTING BRAINDUMP (2A) */
+.report-columns{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.report-col-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-lg);overflow:hidden}
+.report-col-hdr{padding:12px 14px;font-size:12px;font-weight:700;border-bottom:1px solid var(--gray-200)}
+.report-col-body{padding:10px}
+.req-chip{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r-sm);padding:6px 10px;font-size:12px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.req-chip button{background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:12px}
+.req-chip button:hover{color:var(--red)}
+.req-add-input{width:100%;border:1px dashed var(--gray-300);border-radius:var(--r-sm);padding:6px 10px;font-size:12px;font-family:var(--font);margin-top:6px;background:transparent}
+.req-add-input:focus{outline:none;border-color:var(--green);background:#fff}
+
+/* MODEL PICKER (3A) */
+.model-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:900px;margin:0 auto}
+.model-card{background:#fff;border:2px solid var(--gray-200);border-radius:var(--r-xl);padding:24px;cursor:pointer;transition:all 0.18s;text-align:center}
+.model-card:hover{border-color:var(--green);box-shadow:0 0 0 4px rgba(29,158,117,0.08)}
+.model-card.selected{border-color:var(--green);background:var(--green-l);box-shadow:0 0 0 4px rgba(29,158,117,0.15)}
+.model-card-title{font-size:14px;font-weight:700;margin-top:16px;margin-bottom:4px}
+.model-card-desc{font-size:11px;color:var(--gray-500);line-height:1.5}
+.model-svg{width:100%;max-width:200px;height:160px}
+
+/* ACTIVITIES TABLE (3B) */
+.activities-table-wrap{overflow-x:auto}
+.act-table{border-collapse:collapse;font-size:12px;white-space:nowrap}
+.act-table th,.act-table td{border:1px solid var(--gray-200);padding:8px 10px;text-align:left}
+.act-table th{background:var(--gray-50);font-size:11px;font-weight:700;color:var(--gray-500)}
+.act-table .section-hdr-cell{background:var(--navy);color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;text-align:center}
+.act-table input[type=checkbox]{accent-color:var(--green);width:14px;height:14px;cursor:pointer}
+.act-name-input{border:none;font-size:12px;font-family:var(--font);background:transparent;width:140px;font-weight:600}
+.act-name-input:focus{outline:none;border-bottom:1px solid var(--green)}
+.loc-name-input{border:none;font-size:11px;font-family:var(--font);text-align:center;background:transparent;width:90px;font-weight:600}
+.loc-name-input:focus{outline:none;border-bottom:1px solid var(--green)}
+
+/* BUILD STATUS BADGES */
+.bs-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer}
+.bs-todo{background:var(--gray-100);color:var(--gray-600)}
+.bs-inprog{background:var(--amber-l);color:#92400E}
+.bs-review{background:#DBEAFE;color:#1E40AF}
+.bs-amends{background:#FEE2E2;color:#991B1B}
+.bs-approved{background:var(--green-l);color:var(--green-d)}
+
+/* SCENARIOS TABLE (6A) */
+.scenarios-wrap{overflow-x:auto}
+
+/* USER GROUPS TABLE (6B) */
+.ug-totaliser{font-size:11px;font-weight:700;color:var(--green);background:var(--green-l);border-radius:4px;padding:2px 6px;margin-bottom:4px;display:block;text-align:center}
+
+/* TRAINING CALENDAR */
+.time-ok{color:var(--green-d);font-weight:700}
+.time-warn{color:#92400E;font-weight:700}
+.time-bad{color:var(--red);font-weight:700}
+
+/* LAUNCH READINESS */
+.launch-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.launch-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-xl);padding:24px;text-align:center}
+.launch-pct{font-size:40px;font-weight:700;margin-bottom:4px}
+.launch-label{font-size:13px;color:var(--gray-500);font-weight:600}
+.big-progress{height:12px;border-radius:6px;overflow:hidden;background:var(--gray-200);margin:12px 0}
+.big-progress-fill{height:100%;border-radius:6px;transition:width 0.6s ease}
+
+/* ORG SETTINGS */
+.status-config-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--gray-200);border-radius:var(--r-md);margin-bottom:6px;background:#fff;cursor:grab}
+.status-config-row:hover{border-color:var(--gray-300)}
+.status-drag-handle{color:var(--gray-300);font-size:14px;cursor:grab;padding:0 4px}
+.status-color-swatch{width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,0,0,0.1);cursor:pointer;flex-shrink:0}
+.status-name-input{flex:1;border:none;font-size:13px;font-family:var(--font);font-weight:600;background:transparent;color:var(--gray-900)}
+.status-name-input:focus{outline:none;border-bottom:1px solid var(--green)}
+
+/* FEEDBACK PAGE */
+.champion-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-xl);padding:32px;max-width:900px;margin:0 auto}
+.testing-status-sel{border:1px solid var(--gray-300);border-radius:var(--r-md);padding:6px 8px;font-size:12px;font-family:var(--font);background:#fff;width:100%}
+.feedback-textarea{width:100%;border:1px solid var(--gray-200);border-radius:var(--r-md);padding:8px;font-size:12px;font-family:var(--font);min-height:60px;resize:vertical}
+.feedback-textarea:focus{outline:none;border-color:var(--green)}
+
+</style>
+</head>
+<body>
+
+<div class="proto-notice">🛠 MAKERBLE RUNWAY — INTERACTIVE PROTOTYPE · Not connected to a database</div>
+
+<!-- TOPBAR -->
+<div class="topbar" id="topbar" style="display:none">
+  <div class="tb-left" onclick="nav('orgs')">
+    <img class="tb-shield" id="tb-shield" src="" alt="M">
+    <span class="tb-title">Makerble Runway</span>
+  </div>
+  <div class="tb-right">
+    <div class="tb-nav">
+      <button class="tb-nav-btn" onclick="nav('orgs')">Organisations</button>
+      <button class="tb-nav-btn" onclick="nav('admin')">Admin</button>
+      <button class="tb-nav-btn" onclick="nav('org-settings')">⚙ Org Settings</button>
+      <button class="tb-nav-btn" onclick="nav('champion-feedback')" style="font-size:11px;opacity:0.7">🔗 Demo: Champion Feedback</button>
+    </div>
+    <div class="tb-user">
+      <div class="avatar" onclick="nav('profile')">M</div>
+      <span>Matt Kepple</span>
+      <span class="tag tag-green">Super User</span>
+    </div>
+    <button class="btn btn-light btn-sm" onclick="nav('login')">Sign out</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: LOGIN
+═══════════════════════════════════════════ -->
+<div class="screen active" id="screen-login">
+  <div class="login-screen">
+    <div class="login-card">
+      <img class="login-shield" id="login-shield" src="" alt="Makerble">
+      <div class="login-title">Makerble Runway</div>
+      <div class="login-sub">Sign in with your Makerble account</div>
+      <div class="form-row">
+        <label class="form-label">Email</label>
+        <input class="input" type="email" value="matt@makerble.com" placeholder="you@example.com">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Password</label>
+        <input class="input" type="password" value="••••••••••" placeholder="Password">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;padding:10px" onclick="doLogin()">Sign in</button>
+      <p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:16px">Uses your existing Makerble credentials</p>
+    </div>
+    <img id="login-full-logo" src="" alt="Makerble" class="login-footer-logo">
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: ORGS
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-orgs">
+  <div class="main">
+    <div class="page-header">
+      <div class="page-title">Organisations</div>
+      <div class="page-sub">Manage client organisations and their onboarding programmes</div>
+    </div>
+    <div class="section-hdr">
+      <h2>All Organisations</h2>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-org')">+ New Organisation</button>
+    </div>
+    <div class="grid-2" id="orgs-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: ORG
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-org">
+  <div class="main">
+    <button class="nav-back" onclick="nav('orgs')">← All Organisations</button>
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:28px">
+      <div class="org-logo" id="org-page-logo" style="margin-bottom:0;width:60px;height:60px;font-size:20px"></div>
+      <div style="flex:1">
+        <div class="page-title" id="org-page-title"></div>
+        <div class="page-sub" id="org-page-sub"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm" onclick="nav('org-members')">👥 Members</button>
+        <button class="btn btn-sm" onclick="nav('org-dashboard')">📊 Dashboard</button>
+      </div>
+    </div>
+    <!-- Org progress bar -->
+    <div class="card" style="margin-bottom:24px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:13px;font-weight:700">Overall Onboarding Progress</span>
+        <span style="font-size:12px;color:var(--gray-500)" id="org-prog-label"></span>
+      </div>
+      <div class="prog-bar" id="org-prog-bar" style="height:10px"></div>
+      <div class="prog-bar-labels">
+        <div class="prog-bar-label"><div class="prog-bar-dot" style="background:var(--gray-300)"></div>Not Started</div>
+        <div class="prog-bar-label"><div class="prog-bar-dot" style="background:var(--amber)"></div>In Progress</div>
+        <div class="prog-bar-label"><div class="prog-bar-dot" style="background:var(--green)"></div>Done</div>
+      </div>
+    </div>
+    <div class="section-hdr">
+      <h2>Programmes</h2>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-prog')">+ New Programme</button>
+    </div>
+    <div class="grid-2" id="progs-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: PROGRAMME
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-prog">
+  <div class="main-wide">
+    <button class="nav-back" id="prog-back-btn">← Back</button>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">
+      <div class="prog-logo" id="prog-page-logo" style="width:52px;height:52px;font-size:16px"></div>
+      <div style="flex:1">
+        <div class="page-title" id="prog-page-title" style="font-size:20px"></div>
+        <div class="page-sub" id="prog-page-org"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="view-toggle">
+          <button class="view-btn active" id="view-btn-full" onclick="setView('full')">📋 Full View</button>
+          <button class="view-btn" id="view-btn-wb" onclick="setView('workbench')">🔧 Workbench</button>
+        </div>
+        <button class="btn btn-sm" onclick="nav('org')">⚙️ Settings</button>
+      </div>
+    </div>
+    <!-- Programme progress bar -->
+    <div style="margin-bottom:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:12px;font-weight:700;color:var(--gray-500)">Programme Progress</span>
+        <span style="font-size:12px;color:var(--gray-500)" id="prog-prog-label"></span>
+      </div>
+      <div class="prog-bar" id="prog-prog-bar" style="height:8px"></div>
+    </div>
+
+    <!-- FULL VIEW -->
+    <div id="view-full">
+      <div id="steps-accordion"></div>
+    </div>
+
+    <!-- WORKBENCH VIEW -->
+    <div id="view-workbench" style="display:none">
+      <div class="info-bar">🔧 Workbench view — showing only practical collaboration tools for each step.</div>
+      <div id="workbench-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: ORG MEMBERS
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-org-members">
+  <div class="main">
+    <button class="nav-back" onclick="nav('org')">← Back to Org</button>
+    <div class="page-header">
+      <div class="page-title">Manage Members</div>
+      <div class="page-sub" id="members-page-sub"></div>
+    </div>
+    <div class="card">
+      <div class="section-hdr">
+        <h2>Members</h2>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-invite')">+ Invite member</button>
+      </div>
+      <div id="members-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: ORG DASHBOARD
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-org-dashboard">
+  <div class="main-wide">
+    <button class="nav-back" onclick="nav('org')">← Back to Org</button>
+    <div class="page-header">
+      <div class="page-title">Org Dashboard</div>
+      <div class="page-sub" id="dash-page-sub"></div>
+    </div>
+
+    <!-- Table 1: User Understanding -->
+    <div class="card" style="margin-bottom:20px">
+      <h2 style="font-size:15px;font-weight:700;margin-bottom:16px">User Understanding</h2>
+      <div style="overflow-x:auto" id="understanding-table"></div>
+    </div>
+
+    <!-- Table 2: Programme × Step -->
+    <div class="card" style="margin-bottom:20px">
+      <h2 style="font-size:15px;font-weight:700;margin-bottom:16px">Programme Progress by Step</h2>
+      <div style="overflow-x:auto" id="prog-step-table"></div>
+    </div>
+
+    <!-- Table 3: Stage durations -->
+    <div class="card">
+      <h2 style="font-size:15px;font-weight:700;margin-bottom:16px">Stage Duration (days)</h2>
+      <div style="overflow-x:auto" id="duration-table"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: ADMIN
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-admin">
+  <div class="main">
+    <div class="page-header">
+      <div class="page-title">Admin</div>
+      <div class="page-sub">Manage Core Concepts, Checklists and Reminder Rules</div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="adminTab('concepts',this)">Core Concepts</button>
+      <button class="tab" onclick="adminTab('checklists',this)">Checklists</button>
+      <button class="tab" onclick="adminTab('reminders',this)">Reminder Rules</button>
+      <button class="tab" onclick="adminTab('step-templates',this)">Step Templates</button>
+    </div>
+    <div id="admin-tab-concepts">
+      <div class="section-hdr">
+        <h2>Core Concepts</h2>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-concept')">+ New Concept</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>Title</th><th>Step</th><th>Status</th><th>Position</th><th>Actions</th></tr></thead>
+        <tbody id="concepts-admin-tbody"></tbody>
+      </table>
+    </div>
+    <div id="admin-tab-checklists" style="display:none">
+      <div class="section-hdr">
+        <h2>Checklist Items</h2>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-checklist')">+ New Item</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>Question</th><th>Step</th><th>Why description</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="checklist-admin-tbody"></tbody>
+      </table>
+    </div>
+    <div id="admin-tab-reminders" style="display:none">
+      <div class="section-hdr">
+        <h2>Reminder Rules</h2>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-rule')">+ New Rule</button>
+      </div>
+      <div id="reminder-rules-list"></div>
+    </div>
+    <div id="admin-tab-step-templates" style="display:none">
+      <div class="section-hdr"><h2>Step Templates</h2></div>
+      <table class="admin-table">
+        <thead><tr><th>#</th><th>Title</th><th>Phase</th><th>Key Decision Prompt</th><th>Actions</th></tr></thead>
+        <tbody id="step-templates-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: PROFILE
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-profile">
+  <div class="main">
+    <button class="nav-back" onclick="nav('orgs')">← Back</button>
+    <div class="page-header"><div class="page-title">My Profile</div><div class="page-sub">Update your name, password and profile picture</div></div>
+    <div class="card" style="max-width:480px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+        <div class="avatar" style="width:72px;height:72px;font-size:24px;border-radius:50%">M</div>
+        <div><div style="font-weight:700;font-size:15px">Matt Kepple</div><div style="font-size:12px;color:var(--gray-500)">Click avatar to change photo</div></div>
+      </div>
+      <div class="form-row"><label class="form-label">Display name</label><input class="input" value="Matt Kepple"></div>
+      <div class="form-row"><label class="form-label">New password</label><input class="input" type="password" placeholder="Leave blank to keep current"></div>
+      <div class="success-bar" style="display:none;background:var(--green-l);color:var(--green-d);border-radius:var(--r-md);padding:10px;font-size:13px;margin-bottom:12px" id="profile-save-msg">Changes saved ✓</div>
+      <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="document.getElementById('profile-save-msg').style.display='block'">Save changes</button></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: ORG SETTINGS
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-org-settings">
+  <div id="org-settings-content"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: CHAMPION FEEDBACK (public page demo)
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-champion-feedback">
+  <div class="main">
+    <div style="text-align:center;padding:24px 0 12px">
+      <img id="champ-shield" src="" alt="Makerble" style="height:36px;margin-bottom:8px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:4px">Bambanani Programme — Champion Testing Feedback</div>
+      <p style="font-size:13px;color:var(--gray-500);max-width:500px;margin:0 auto 24px">We'd like to collect your feedback on the Bambanani Makerble Platform. Please fill in your testing experience for each scenario below.</p>
+    </div>
+    <div class="champion-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--gray-200)">
+        <div class="avatar" style="width:36px;height:36px">S</div>
+        <div><div style="font-weight:700;font-size:14px">Sandra Dlamini</div><div style="font-size:12px;color:var(--gray-500)">Champion · Case Workers, Receptionists</div></div>
+      </div>
+      <table class="wb-table">
+        <thead><tr>
+          <th style="min-width:260px">Scenario</th>
+          <th style="min-width:120px">Testing Status</th>
+          <th style="min-width:200px">Details of Amends</th>
+          <th style="min-width:200px">Any Other Feedback</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-size:12px;font-weight:600;line-height:1.4">Register a new child using the Bambanani Child Bio Form including Next of Kin details</td>
+            <td><select class="testing-status-sel"><option>Not tested</option><option selected>Approved</option><option>Testing in progress</option><option>Amends needed</option></select></td>
+            <td><textarea class="feedback-textarea" placeholder="Describe any amends needed…">The form felt intuitive. Loved the auto-save!</textarea></td>
+            <td><textarea class="feedback-textarea" placeholder="Any other thoughts…"></textarea></td>
+          </tr>
+          <tr>
+            <td style="font-size:12px;font-weight:600;line-height:1.4">Complete and submit a Termly Assessment survey for a child</td>
+            <td><select class="testing-status-sel"><option selected>Not tested</option><option>Approved</option><option>Testing in progress</option><option>Amends needed</option></select></td>
+            <td><textarea class="feedback-textarea" placeholder="Describe any amends needed…"></textarea></td>
+            <td><textarea class="feedback-textarea" placeholder="Any other thoughts…"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="display:flex;justify-content:flex-end;margin-top:20px">
+        <button class="btn btn-primary" onclick="alert('Thank you! Your feedback has been submitted.')" style="padding:10px 28px">Submit Feedback</button>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:24px">
+      <img id="champ-full-logo" src="" alt="Makerble" style="height:20px;opacity:0.25">
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-new-org">
+  <div class="modal">
+    <h2>New Organisation</h2>
+    <div class="form-row"><label class="form-label">Organisation name</label><input class="input" id="new-org-name" placeholder="e.g. AfrikaTikkun"></div>
+    <div class="form-row"><label class="form-label">Logo (optional)</label><div style="width:64px;height:64px;border:1px dashed var(--gray-300);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--gray-400)">Add logo</div></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-new-org')">Cancel</button><button class="btn btn-primary" onclick="createOrg()">Create</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-new-prog">
+  <div class="modal">
+    <h2>New Programme</h2>
+    <div class="form-row"><label class="form-label">Programme name</label><input class="input" id="new-prog-name" placeholder="e.g. Bambanani"></div>
+    <div class="form-row"><label class="form-label">Logo (optional)</label><div style="width:64px;height:64px;border:1px dashed var(--gray-300);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--gray-400)">Add logo</div></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-new-prog')">Cancel</button><button class="btn btn-primary" onclick="createProg()">Create</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-invite">
+  <div class="modal">
+    <h2>Invite member</h2>
+    <div class="info-bar">ℹ️ They'll receive an invitation email if their Makerble account is not found.</div>
+    <div class="form-row"><label class="form-label">Full name</label><input class="input" placeholder="e.g. Pinky Khwiane"></div>
+    <div class="form-row"><label class="form-label">Email address</label><input class="input" type="email" placeholder="pinky@org.org"></div>
+    <div class="form-row"><label class="form-label">Role</label><select class="select"><option>Manager</option><option>Member</option></select></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-invite')">Cancel</button><button class="btn btn-primary" onclick="closeModal('modal-invite')">Invite</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-new-concept">
+  <div class="modal">
+    <h2>New Core Concept</h2>
+    <div class="form-row"><label class="form-label">Title</label><input class="input" placeholder="e.g. What is a Bio Form?"></div>
+    <div class="form-row"><label class="form-label">Step</label><select class="select" id="concept-step-select"></select></div>
+    <div class="form-row"><label class="form-label">Description</label><textarea class="input" rows="3" placeholder="Explain the concept clearly..."></textarea></div>
+    <div class="form-row"><label class="form-label">Learn More URL</label><input class="input" placeholder="https://makerble.atlassian.net/..."></div>
+    <div class="form-row"><label class="form-label">Image</label><div style="border:1px dashed var(--gray-300);border-radius:8px;padding:20px;text-align:center;cursor:pointer;font-size:12px;color:var(--gray-500)">Upload image</div></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-new-concept')">Cancel</button><button class="btn btn-primary" onclick="closeModal('modal-new-concept')">Create</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-new-checklist">
+  <div class="modal">
+    <h2>New Checklist Item</h2>
+    <div class="form-row"><label class="form-label">Step</label><select class="select" id="checklist-step-select"></select></div>
+    <div class="form-row"><label class="form-label">Question</label><input class="input" placeholder="e.g. Does your spreadsheet have a full name column?"></div>
+    <div class="form-row"><label class="form-label">Why this is necessary</label><textarea class="input" rows="3" placeholder="Explain why this matters..."></textarea></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-new-checklist')">Cancel</button><button class="btn btn-primary" onclick="closeModal('modal-new-checklist')">Create</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-new-rule">
+  <div class="modal">
+    <h2>New Reminder Rule</h2>
+    <div class="form-row"><label class="form-label">Step</label><select class="select" id="rule-step-select"></select></div>
+    <div class="form-row"><label class="form-label">Send after (days in progress)</label><input class="input" type="number" value="14"></div>
+    <div class="form-row"><label class="form-label">Email subject</label><input class="input" placeholder="e.g. Runway: {{programme_name}} — step update needed"></div>
+    <div class="form-row"><label class="form-label">Email body</label><textarea class="input" rows="5" placeholder="Hi,&#10;&#10;{{programme_name}} has been in the {{step_name}} step for {{days_in_progress}} days...&#10;&#10;{{runway_link}}"></textarea></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-new-rule')">Cancel</button><button class="btn btn-primary" onclick="closeModal('modal-new-rule')">Create</button></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     APP FOOTER
+═══════════════════════════════════════════ -->
+<div class="app-footer" id="app-footer" style="display:none">
+  <img id="footer-logo" src="" alt="Makerble">
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// ASSETS (inlined base64 — loaded at runtime)
+// ─────────────────────────────────────────────
+const ASSETS = {};
+const ASSET_FILES = {
+  shield: 'Makerble_App_512px.png',
+  full_logo: 'Makerble_logo.png',
+  icon_signup: 'icon_signup',
+  icon_assess: 'icon_assess',
+  icon_assign: 'icon_assign',
+  icon_inform: 'icon_inform',
+  icon_provide: 'icon_provide',
+  icon_reassess: 'icon_reassess',
+  icon_complete: 'icon_complete',
+};
+
+// ─────────────────────────────────────────────
+// DATA MODEL
+// ─────────────────────────────────────────────
+const STEP_TEMPLATES = [
+  {id:1,pos:1,phase:'Design',title:"What's the participant journey?",keyDecision:"Describe the participant journey stages you've agreed on for this programme.",desc:"Map out every stage of how a participant moves through your programme — from first contact to completion.",video:'',concepts:[
+    {id:'c1',title:'The 7 Stages',img:'icon_signup',desc:'Makerble structures every programme into 7 stages: Signup, Assess, Assign, Inform, Provide, Re-assess and Complete. Each represents a distinct moment in the participant journey.'},
+    {id:'c2',title:'What is a Bio Form?',img:'icon_assess',desc:'A Bio Form captures essential information about a participant at registration. It\'s the foundation of their record in Makerble.'},
+    {id:'c3',title:'Audiences',img:'icon_assign',desc:'Audiences define who your participants are — their type and role within the programme. Each participant is tagged with an audience on registration.'},
+    {id:'c4',title:'Contacts vs Profiles',img:'icon_inform',desc:'In Makerble, a Contact is a participant record. A Profile is the person behind the account. They can be linked but are distinct concepts.'},
+  ],checklist:[
+    {id:'cl1',q:'Have you listed all the distinct types of participant your programme serves?',why:'Knowing participant types determines how many audience categories and bio forms you need to create in Makerble.'},
+    {id:'cl2',q:'Do any of your participants require a parent or guardian relationship?',why:'Under-18 participants or those with carers need a relationship structure built into Makerble — this must be planned before building.'},
+    {id:'cl3',q:'Have you identified all the data fields you need to capture at registration?',why:'Fields need to be created as custom fields in Makerble before forms are built. Knowing them upfront prevents rework.'},
+    {id:'cl4',q:'Do you have copies of all your current paper or digital registration forms?',why:'Your existing forms are the source of truth for what Makerble needs to replicate. We need them before the Build phase.'},
+  ],resources:[
+    {title:'Onboarding Guide — full overview',desc:'Covers all 8 steps of the Makerble onboarding process',url:'https://makerble.atlassian.net/wiki/spaces/MCPD/pages/791642140',type:'User Guide'},
+    {title:'Bio Forms explained',desc:'How to create and manage participant bio forms in Makerble',url:'https://makerble.atlassian.net',type:'User Guide'},
+  ]},
+  {id:2,pos:2,phase:'Design',title:"What are our reporting requirements?",keyDecision:"List the key metrics and outcomes you need to report on, and who you report to.",desc:"Identify what you need to measure, track and report — for funders, management or statutory requirements.",video:'',concepts:[
+    {id:'c5',title:'Outcomes & Indicators',img:'icon_reassess',desc:'Outcomes are the changes you want to achieve. Indicators are how you measure them. Makerble lets you attach both to a programme for structured impact reporting.'},
+    {id:'c6',title:'Surveys in Makerble',img:'icon_assess',desc:'Surveys capture data at any point in the participant journey. They support conditional logic (skip logic) to tailor question flows.'},
+  ],checklist:[
+    {id:'cl5',q:'Do you have funder reporting requirements with specific data fields?',why:'Funder requirements may mandate specific fields (e.g. NHS codes, ethnicity categories) that need to be created as custom fields in Makerble.'},
+    {id:'cl6',q:'Do you collect data at baseline and endline (or multiple time points)?',why:'Longitudinal data collection needs interval-based surveys configured in Makerble — this affects the survey architecture.'},
+    {id:'cl7',q:'Have you identified which outcomes you want to track?',why:'Outcomes need to be defined in Makerble before surveys are built. Knowing them now prevents architectural changes later.'},
+  ],resources:[
+    {title:'Outcomes & Impact measurement',desc:'Setting up outcomes and indicators in Makerble',url:'https://makerble.atlassian.net',type:'User Guide'},
+  ]},
+  {id:3,pos:3,phase:'Build',title:"How do we structure our work?",keyDecision:"Confirm the project structure — how many projects, their names and which participant types belong to each.",desc:"Define the project architecture in Makerble — how your work is organised into projects and states.",video:'',concepts:[
+    {id:'c7',title:'Projects in Makerble',img:'icon_assign',desc:'A Project is the core organisational unit in Makerble. Every participant is enrolled in one or more projects, and all activities are recorded within them.'},
+    {id:'c8',title:'Project States',img:'icon_provide',desc:'Within a project, participants can be in four states: Waiting List, Enrolled, Alumni or Declined. You choose which states to activate for each project.'},
+  ],checklist:[
+    {id:'cl8',q:'Have you decided how many distinct projects you need in Makerble?',why:'Each programme area or service type typically maps to a separate project. Getting this right prevents data mixing.'},
+    {id:'cl9',q:'Do any of your projects need a waiting list state?',why:'If you manage demand for a service, activating the Waiting List state lets you track people before they are enrolled.'},
+  ],resources:[],},
+  {id:4,pos:4,phase:'Build',title:"Create our content and assign it to projects",keyDecision:"Confirm which forms, surveys, and events have been built and correctly assigned to their projects.",desc:"Build the forms, surveys and events that make up the programme's digital infrastructure.",video:'',concepts:[
+    {id:'c9',title:'Signup Pages',img:'icon_signup',desc:'A Signup Page is the public-facing form link you share with participants or embed on your website. Each one is linked to a specific bio form and project.'},
+    {id:'c10',title:'Email Notifications',img:'icon_inform',desc:'Configure automatic emails that fire when a form is completed — to the participant, to your team, or both.'},
+  ],checklist:[
+    {id:'cl10',q:'Have all registration forms been digitised and tested in Makerble?',why:'Forms must be built and tested before going live. A broken form means missed registrations.'},
+    {id:'cl11',q:'Have email notifications been configured for each signup page?',why:'Without notifications, your team won\'t know when new registrations come in unless they log in to check.'},
+    {id:'cl12',q:'Has the signup page URL been tested end-to-end in an incognito browser?',why:'Testing in incognito simulates the experience for a new user who isn\'t logged in to Makerble.'},
+  ],resources:[]},
+  {id:5,pos:5,phase:'Import',title:"Import the data",keyDecision:"Confirm the data import is complete, duplicates have been resolved, and all records are correctly structured.",desc:"Import existing participant and attendance data from your previous systems into Makerble.",video:'',concepts:[
+    {id:'c11',title:'How imports work',img:'icon_assign',desc:'Makerble imports from CSV files. Each column in your spreadsheet maps to a field in Makerble. You can import contacts, attendance records and custom field data.'},
+    {id:'c12',title:'Deduplication',img:'icon_assess',desc:'When importing, Makerble can automatically merge duplicate contact records based on matching name, email or date of birth. Configure deduplication rules before importing.'},
+    {id:'c13',title:'Relationships',img:'icon_inform',desc:'If you have parent-child or carer-participant relationships, these need to be imported carefully. Import the child records first, then the parent records, and link them.'},
+  ],checklist:[
+    {id:'cl13',q:'Does your spreadsheet have a single full name column (or separate first/last name columns)?',why:'Makerble matches contacts on full name for deduplication. Split or inconsistently formatted names cause failed imports and duplicates.'},
+    {id:'cl14',q:'Are all dates of birth in DD/MM/YYYY format?',why:'Makerble expects a consistent date format. Mixed formats will cause import failures or incorrect dates.'},
+    {id:'cl15',q:'Do phone numbers include the leading zero?',why:'Spreadsheet software often strips leading zeros from numbers. A phone number without its leading zero cannot be used for SMS or verification.'},
+    {id:'cl16',q:'If you capture diagnosis status, do you have separate columns for autism and ADHD?',why:'Makerble stores autism and ADHD diagnosis status as separate fields. A single combined column cannot be imported without splitting it first.'},
+    {id:'cl17',q:'Have you removed any columns with data you do not need to import?',why:'Unnecessary columns create noise and risk importing sensitive data you have no use for in Makerble.'},
+    {id:'cl18',q:'Are there any rows with a blank name field?',why:'Makerble cannot create a contact record without a name. Blank-name rows will fail during import and need to be resolved beforehand.'},
+  ],resources:[
+    {title:'Data import guide',desc:'Step-by-step guide to preparing and running a contact import',url:'https://makerble.atlassian.net',type:'User Guide'},
+  ]},
+  {id:6,pos:6,phase:'Embed',title:"Select champions",keyDecision:"Name the internal champions who will drive adoption and support colleagues.",desc:"Identify the people within the organisation who will lead and support adoption of Makerble.",video:'',concepts:[
+    {id:'c14',title:'What makes a good champion?',img:'icon_provide',desc:'A champion is someone with enough credibility to influence colleagues and enough curiosity to learn the platform deeply. They don\'t need to be technical — they need to care.'},
+  ],checklist:[
+    {id:'cl19',q:'Have you identified at least one champion per team or location?',why:'Without a local champion, adoption tends to stall when colleagues hit small problems that don\'t warrant a formal support request.'},
+    {id:'cl20',q:'Do your champions have protected time to learn and support the rollout?',why:'Champions who are expected to learn Makerble on top of a full workload quickly become bottlenecks rather than enablers.'},
+  ],resources:[]},
+  {id:7,pos:7,phase:'Embed',title:"Decide who gets trained to do what",keyDecision:"Define the training plan — who receives which training, in what format, and by when.",desc:"Plan and deliver role-appropriate training for all users before go-live.",video:'',concepts:[
+    {id:'c15',title:'User roles in Makerble',img:'icon_assign',desc:'Makerble has different permission levels. Administrators can build and configure. Standard users can record data. Deciding roles before training ensures people learn what\'s relevant to them.'},
+  ],checklist:[
+    {id:'cl21',q:'Have you mapped each staff member to a Makerble user role?',why:'Training people on features they won\'t have access to wastes time and creates confusion.'},
+    {id:'cl22',q:'Have you scheduled training sessions before the go-live date?',why:'Last-minute training increases anxiety and reduces retention. People need time to practise between training and going live.'},
+  ],resources:[]},
+  {id:8,pos:8,phase:'Embed',title:"Set a Go Live date",keyDecision:"Confirm the go-live date and any conditions that must be met before going live.",desc:"Set a firm go-live date and confirm all pre-conditions are met.",video:'',concepts:[],
+  checklist:[
+    {id:'cl23',q:'Have all forms been tested end-to-end?',why:'An untested form going live is the single most common cause of lost registration data in the first week.'},
+    {id:'cl24',q:'Has a data backup or export of legacy data been completed?',why:'Before switching to Makerble as the system of record, ensure legacy data is preserved in case it is needed.'},
+    {id:'cl25',q:'Are all team members trained and have Makerble accounts set up?',why:'Users who don\'t have accounts on go-live day cannot record data, creating gaps in the record from day one.'},
+  ],resources:[]},
+];
+
+const STAGE_ICONS_MAP = {signup:'icon_signup',assess:'icon_assess',assign:'icon_assign',inform:'icon_inform',provide:'icon_provide',reassess:'icon_reassess',complete:'icon_complete'};
+const STAGES_DATA = [
+  {id:'signup',label:'1. Signup',short:'Signup',bg:'#FFF8EE',tx:'#854F0B',desc:'Your <b>forms</b> for new referrals and how people <b>register</b>'},
+  {id:'assess',label:'2. Assess',short:'Assess',bg:'#EEF4FF',tx:'#185FA5',desc:'How you decide a participant\'s <b>suitability</b> for a service and identify their <b>needs</b>'},
+  {id:'assign',label:'3. Assign',short:'Assign',bg:'#EEFFF6',tx:'#3B6D11',desc:'How you assign participants to specific <b>colleagues</b> and <b>services</b> including to a <b>waiting list</b>'},
+  {id:'inform',label:'4. Inform',short:'Inform',bg:'#F0EEFF',tx:'#534AB7',desc:'How you tell participants the details of <b>when</b> and <b>where</b> they will be receiving the service'},
+  {id:'provide',label:'5. Provide',short:'Provide',bg:'#EEFFF6',tx:'#0F6E56',desc:'How you <b>schedule</b>, <b>deliver</b> and <b>monitor</b> the support being provided'},
+  {id:'reassess',label:'6. Re-assess',short:'Re-assess',bg:'#FFF0F5',tx:'#993556',desc:'Other information you <b>collect</b> or <b>track over time</b> e.g. to show how the participant is improving'},
+  {id:'complete',label:'7. Complete',short:'Complete',bg:'#F5F5F5',tx:'#5F5E5A',desc:'What happens at the end of a participant\'s use of this service'},
+];
+
+// Sample data
+let orgs = [
+  {id:'o1',name:'AfrikaTikkun',logo:null,members:[
+    {id:'u2',name:'Pinky Khwiane',email:'pinky@afrikatikkun.org',role:'manager'},
+    {id:'u3',name:'Motloang Mohapi',email:'motloang@afrikatikkun.org',role:'member'},
+    {id:'u4',name:'Amukelani Ngobeni',email:'amukelani@afrikatikkun.org',role:'member'},
+  ]},
+  {id:'o2',name:'AIM Isle of Wight',logo:null,members:[
+    {id:'u5',name:'Jude',email:'jude@aim-iow.org.uk',role:'manager'},
+  ]},
+];
+
+let programmes = [
+  {id:'p1',orgId:'o1',name:'Bambanani',logo:null,steps:buildSteps('p1',[2,4,1,0,0,0,0,0]),journey:{
+    signup:['Bio Form of the Child','Bio Form of Next of Kin','Bio Form of Biological Parents','Road to Health card','Birth Certificates','Consent Form','Indemnity Form','Dietary Requirements'],
+    assess:['360° Team Screening Assessment','OVC screening (orphaned/vulnerable child)','Assign Social Worker if needed'],
+    assign:['Assign to age-specific class (2-3yr, 3-4yr etc.)','30-40 children per class','Assign class teacher'],
+    inform:['Communication managed at classroom level','WhatsApp Groups for parent & teacher comms'],
+    provide:['80% attendance expectation','4 meals per day (breakfast, snack, lunch, snack)','Track curriculum topic per session'],
+    reassess:['Bambanani Outcomes form','School Readiness Assessment','Termly Assessments','EGMA Survey'],
+    complete:['Archive all active learners at year end','Re-registration for following year'],
+  }},
+  {id:'p2',orgId:'o1',name:'360 Support',logo:null,steps:buildSteps('p2',[1,1,0,0,0,0,0,0]),journey:{signup:[],assess:[],assign:[],inform:[],provide:[],reassess:[],complete:[]}},
+  {id:'p3',orgId:'o2',name:'Sensory Library',logo:null,steps:buildSteps('p3',[2,3,2,1,0,0,0,0]),journey:{
+    signup:['Parent Carer bio form','Borrower bio form','Consent form'],
+    assess:['Sensory Library loan request form'],
+    assign:['Assign loan items','Link parent to child borrower'],
+    inform:['Email notification to Linda','WhatsApp confirmation'],
+    provide:[],reassess:[],complete:[],
+  }},
+];
+
+let understood = {}; // key: userId-conceptId
+let checklistAnswers = {}; // key: progId-stepId-itemId
+let stepStatuses = {}; // key: progId-stepId
+let decisions = {}; // key: progId-stepId
+let decisionsConfirmed = {}; // key: progId-stepId
+let notes = {}; // key: userId-stepId
+let currentOrg = null;
+let currentProg = null;
+let expandedStep = null;
+let activeStepTab = {};
+
+function buildSteps(progId, statuses) {
+  // statuses: array of 8 numbers: 0=not_started,1=in_progress,2=done
+  return STEP_TEMPLATES.map((t,i) => ({
+    templateId: t.id,
+    status: statuses[i] === 2 ? 'done' : statuses[i] === 1 ? 'in_progress' : 'not_started',
+    startedAt: statuses[i] >= 1 ? daysAgo(20 - i*2) : null,
+    completedAt: statuses[i] === 2 ? daysAgo(10 - i) : null,
+  }));
+}
+function daysAgo(n) { const d = new Date(); d.setDate(d.getDate()-n); return d.toISOString().split('T')[0]; }
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+function nav(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + screen);
+  if (el) el.classList.add('active');
+  const topbar = document.getElementById('topbar');
+  const footer = document.getElementById('app-footer');
+  if (screen === 'login') { topbar.style.display='none'; footer.style.display='none'; }
+  else { topbar.style.display='flex'; footer.style.display='flex'; }
+  if (screen === 'orgs') renderOrgs();
+  if (screen === 'org') renderOrg();
+  if (screen === 'prog') renderProg();
+  if (screen === 'org-members') renderMembers();
+  if (screen === 'org-dashboard') renderDashboard();
+  if (screen === 'admin') renderAdmin();
+  if (screen === 'org-settings') document.getElementById('org-settings-content').innerHTML = renderOrgSettings();
+  if (screen === 'champion-feedback') {
+    setTimeout(()=>{
+      const el=document.getElementById('champ-shield');
+      const el2=document.getElementById('champ-full-logo');
+      if(el&&window.LOADED_ASSETS)el.src=LOADED_ASSETS.shield||'';
+      if(el2&&window.LOADED_ASSETS)el2.src=LOADED_ASSETS.full_logo||'';
+    },50);
+  }
+  // Hide topbar/footer for public pages
+  const topbar2=document.getElementById('topbar');
+  const footer2=document.getElementById('app-footer');
+  if(screen==='champion-feedback'){topbar2.style.display='none';footer2.style.display='none';}
+  window.scrollTo(0,0);
+}
+
+function doLogin() { nav('orgs'); }
+
+// ─────────────────────────────────────────────
+// ORGS
+// ─────────────────────────────────────────────
+function renderOrgs() {
+  const grid = document.getElementById('orgs-grid');
+  grid.innerHTML = orgs.map(o => `
+    <div class="org-card" onclick="openOrg('${o.id}')">
+      <div class="org-logo">${o.logo ? `<img src="${o.logo}">` : o.name.slice(0,2).toUpperCase()}</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">${o.name}</div>
+      <div style="font-size:12px;color:var(--gray-500)">${programmes.filter(p=>p.orgId===o.id).length} programme(s) &bull; ${o.members.length} member(s)</div>
+    </div>`).join('');
+}
+
+function openOrg(id) { currentOrg = orgs.find(o=>o.id===id); nav('org'); }
+
+function createOrg() {
+  const name = document.getElementById('new-org-name').value.trim();
+  if (!name) return;
+  orgs.push({id:'o'+Date.now(),name,logo:null,members:[]});
+  closeModal('modal-new-org');
+  document.getElementById('new-org-name').value='';
+  renderOrgs();
+}
+
+// ─────────────────────────────────────────────
+// ORG PAGE
+// ─────────────────────────────────────────────
+function renderOrg() {
+  if (!currentOrg) return;
+  document.getElementById('org-page-title').textContent = currentOrg.name;
+  document.getElementById('org-page-sub').textContent = `${currentOrg.members.length} members`;
+  const logoEl = document.getElementById('org-page-logo');
+  logoEl.innerHTML = currentOrg.logo ? `<img src="${currentOrg.logo}">` : currentOrg.name.slice(0,2).toUpperCase();
+
+  const orgProgs = programmes.filter(p => p.orgId === currentOrg.id);
+  // Compute org progress
+  let ns=0,ip=0,done=0;
+  orgProgs.forEach(p => p.steps.forEach(s => {
+    if(s.status==='not_started') ns++;
+    else if(s.status==='in_progress') ip++;
+    else done++;
+  }));
+  const total = ns+ip+done;
+  renderProgBar('org-prog-bar', ns, ip, done);
+  document.getElementById('org-prog-label').textContent = `${done}/${total} steps done`;
+
+  const grid = document.getElementById('progs-grid');
+  grid.innerHTML = orgProgs.map(p => {
+    const [pns,pip,pdone] = countStatuses(p);
+    const ptotal = pns+pip+pdone;
+    return `<div class="prog-card" onclick="openProg('${p.id}')">
+      <div class="prog-logo">${p.logo?`<img src="${p.logo}">`:`${p.name.slice(0,2).toUpperCase()}`}</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">${p.name}</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px">Steps: ${pdone} done, ${pip} in progress, ${pns} not started</div>
+        <div class="prog-bar"><div class="prog-bar-seg" style="background:var(--gray-300);width:${pns/ptotal*100}%"></div><div class="prog-bar-seg" style="background:var(--amber);width:${pip/ptotal*100}%"></div><div class="prog-bar-seg" style="background:var(--green);width:${pdone/ptotal*100}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function countStatuses(prog) {
+  let ns=0,ip=0,done=0;
+  prog.steps.forEach(s => { if(s.status==='not_started') ns++; else if(s.status==='in_progress') ip++; else done++; });
+  return [ns,ip,done];
+}
+
+function renderProgBar(id, ns, ip, done) {
+  const total = ns+ip+done;
+  document.getElementById(id).innerHTML = `
+    <div class="prog-bar-seg" style="background:var(--gray-300);width:${ns/total*100}%"></div>
+    <div class="prog-bar-seg" style="background:var(--amber);width:${ip/total*100}%"></div>
+    <div class="prog-bar-seg" style="background:var(--green);width:${done/total*100}%"></div>`;
+}
+
+function openProg(id) {
+  currentProg = programmes.find(p=>p.id===id);
+  expandedStep = null;
+  nav('prog');
+}
+
+function createProg() {
+  const name = document.getElementById('new-prog-name').value.trim();
+  if (!name || !currentOrg) return;
+  const p = {id:'p'+Date.now(),orgId:currentOrg.id,name,logo:null,steps:buildSteps('p'+Date.now(),[0,0,0,0,0,0,0,0]),journey:{signup:[],assess:[],assign:[],inform:[],provide:[],reassess:[],complete:[]}};
+  programmes.push(p);
+  closeModal('modal-new-prog');
+  document.getElementById('new-prog-name').value='';
+  renderOrg();
+}
+
+// ─────────────────────────────────────────────
+// PROGRAMME PAGE
+// ─────────────────────────────────────────────
+function renderProg() {
+  if (!currentProg) return;
+  const org = orgs.find(o=>o.id===currentProg.orgId);
+  document.getElementById('prog-page-title').textContent = currentProg.name;
+  document.getElementById('prog-page-org').textContent = org ? org.name : '';
+  document.getElementById('prog-back-btn').onclick = () => { currentOrg = org; nav('org'); };
+  const logoEl = document.getElementById('prog-page-logo');
+  logoEl.innerHTML = currentProg.logo ? `<img src="${currentProg.logo}">` : currentProg.name.slice(0,2).toUpperCase();
+
+  const [ns,ip,done] = countStatuses(currentProg);
+  const total = ns+ip+done;
+  renderProgBar('prog-prog-bar', ns, ip, done);
+  document.getElementById('prog-prog-label').textContent = `${done}/${total} steps done`;
+
+  renderAccordion();
+  renderWorkbenchView();
+}
+
+function setView(v) {
+  document.getElementById('view-full').style.display = v==='full' ? 'block' : 'none';
+  document.getElementById('view-workbench').style.display = v==='workbench' ? 'block' : 'none';
+  document.getElementById('view-btn-full').classList.toggle('active', v==='full');
+  document.getElementById('view-btn-wb').classList.toggle('active', v==='workbench');
+}
+
+function renderAccordion() {
+  const phases = ['Design','Build','Import','Embed'];
+  const container = document.getElementById('steps-accordion');
+  container.innerHTML = phases.map(phase => {
+    const phaseSteps = STEP_TEMPLATES.filter(t => t.phase === phase);
+    return `<div class="phase-block">
+      <div class="phase-label">${phase}</div>
+      ${phaseSteps.map(t => renderStepRow(t)).join('')}
+    </div>`;
+  }).join('');
+}
+
+function renderStepRow(template) {
+  const stepIdx = template.pos - 1;
+  const step = currentProg.steps[stepIdx];
+  const isExpanded = expandedStep === template.id;
+  const statusClass = step.status==='done' ? 'status-done' : step.status==='in_progress' ? 'status-ip' : 'status-ns';
+  const statusLabel = step.status==='done' ? '✓ Done' : step.status==='in_progress' ? '● In Progress' : '○ Not Started';
+  const decConfirmed = decisionsConfirmed[`${currentProg.id}-${template.id}`];
+  const understood_count = template.concepts.filter(c => understood[`matt-${c.id}`]).length;
+  const understood_pct = template.concepts.length > 0 ? Math.round(understood_count/template.concepts.length*100) : 0;
+
+  return `<div class="step-row${isExpanded?' expanded':''}" id="step-row-${template.id}">
+    <div class="step-hdr" onclick="toggleStep(${template.id})">
+      <div class="step-num">${template.pos}</div>
+      <div class="step-title">${template.title}</div>
+      <div class="step-meta">
+        ${template.concepts.length > 0 ? `<span class="step-understanding">🧠 ${understood_pct}% understood</span>` : ''}
+        ${decConfirmed ? `<span class="tag tag-green" style="font-size:10px">✓ Decision confirmed</span>` : ''}
+        <div class="status-selector">
+          ${['not_started','in_progress','done'].map(s => `<button class="status-btn${step.status===s?' active-'+s.replace('_','-')===step.status.replace('_','-')?'':' active-'+s.replace('not_started','ns').replace('in_progress','ip'):''}${step.status===s?' active-'+s.replace('not_started','ns').replace('in_progress','ip'):''}" onclick="setStatus(event,${template.id},'${s}')">${s==='not_started'?'Not Started':s==='in_progress'?'In Progress':'Done'}</button>`).join('')}
+        </div>
+      </div>
+      <div class="step-chevron">▼</div>
+    </div>
+    <div class="step-body">
+      ${renderStepBody(template, step)}
+    </div>
+  </div>`;
+}
+
+function renderStepBody(template, step) {
+  const tabs = ['Overview','Concepts','Checklist','Workbench','Notes','Resources'];
+  const activeTab = activeStepTab[template.id] || 'Overview';
+  return `<div class="step-tabs">
+    ${tabs.map(t => `<button class="step-tab${activeTab===t?' active':''}" onclick="setStepTab(${template.id},'${t}')">${t}${t==='Concepts'&&template.concepts.length>0?` (${template.concepts.filter(c=>understood[`matt-${c.id}`]).length}/${template.concepts.length})`:''}${t==='Checklist'&&template.checklist.length>0?` (${Object.keys(checklistAnswers).filter(k=>k.startsWith(`${currentProg.id}-${template.id}-`)).length}/${template.checklist.length})`:''}${t==='Workbench'&&template.pos===1?' 🔧':''}</button>`).join('')}
+  </div>
+  <div class="step-tab-content${activeTab==='Overview'?' active':''}">
+    ${renderOverviewTab(template, step)}
+  </div>
+  <div class="step-tab-content${activeTab==='Concepts'?' active':''}">
+    ${renderConceptsTab(template)}
+  </div>
+  <div class="step-tab-content${activeTab==='Checklist'?' active':''}">
+    ${renderChecklistTab(template)}
+  </div>
+  <div class="step-tab-content${activeTab==='Workbench'?' active':''}">
+    ${renderWorkbenchTab(template)}
+  </div>
+  <div class="step-tab-content${activeTab==='Notes'?' active':''}">
+    ${renderNotesTab(template)}
+  </div>
+  <div class="step-tab-content${activeTab==='Resources'?' active':''}">
+    ${renderResourcesTab(template)}
+  </div>`;
+}
+
+function renderOverviewTab(template, step) {
+  const key = `${currentProg.id}-${template.id}`;
+  const confirmed = decisionsConfirmed[key];
+  const decText = decisions[key] || '';
+  return `<p style="font-size:13px;color:var(--gray-600);margin-bottom:16px;line-height:1.6">${template.desc}</p>
+  ${template.keyDecision ? `
+  <div class="decision-box">
+    <div class="decision-prompt">🔑 Key Decision: ${template.keyDecision}</div>
+    ${confirmed
+      ? `<div class="decision-confirmed">✓ Decision confirmed by Matt Kepple on ${decisionsConfirmed[key+'_date'] || 'today'}<br><span style="font-weight:400;font-size:12px;margin-top:4px;display:block">${decText}</span></div>
+         <button class="btn btn-sm btn-ghost" style="margin-top:8px" onclick="reopenDecision('${key}')">Re-open (Super User only)</button>`
+      : `<textarea class="decision-input" id="dec-${key}" placeholder="Record your decision here...">${decText}</textarea>
+         <div style="display:flex;justify-content:flex-end;margin-top:8px">
+           <button class="btn btn-primary btn-sm" onclick="confirmDecision('${key}')">Confirm Decision</button>
+         </div>`
+    }
+  </div>` : ''}
+  <div style="margin-top:12px">
+    <div style="font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:6px">Step Status</div>
+    <div class="status-selector">
+      ${['not_started','in_progress','done'].map(s => `<button class="status-btn${step.status===s?' active-'+s.replace('not_started','ns').replace('in_progress','ip'):''}" onclick="setStatusFromOverview('${currentProg.id}',${template.id},'${s}')">${s==='not_started'?'Not Started':s==='in_progress'?'In Progress':'Done'}</button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderConceptsTab(template) {
+  if (template.concepts.length === 0) return `<div class="empty-state"><div class="empty-state-icon">💡</div><p>No Core Concepts for this step yet.<br>Super Users can add them in Admin.</p></div>`;
+  const visitedConcepts = true; // simulated
+  return `<div class="concepts-grid" id="concepts-grid-${template.id}">
+    ${template.concepts.map(c => renderConceptTile(c, template.id)).join('')}
+  </div>`;
+}
+
+function renderConceptTile(concept, stepId) {
+  const isUnderstood = understood[`matt-${concept.id}`];
+  const isFlipped = window._flipped && window._flipped[concept.id];
+  const iconKey = STAGE_ICONS_MAP[concept.img] || 'icon_signup';
+  return `<div class="concept-tile${isUnderstood?' understood':''}${isFlipped?' flipped':''}" id="tile-${concept.id}" onclick="flipTile('${concept.id}')">
+    <div class="concept-inner">
+      <div class="concept-face concept-front">
+        <img src="${window.LOADED_ASSETS ? LOADED_ASSETS[iconKey] : ''}" style="width:100%;height:65%;object-fit:contain;padding:16px;background:var(--gray-50)">
+        <div class="concept-front-label">${concept.title}</div>
+        <div class="concept-understood-badge">✓</div>
+      </div>
+      <div class="concept-face concept-back">
+        <div class="concept-back-title">${concept.title}</div>
+        <div class="concept-back-desc">${concept.desc}</div>
+        <div class="concept-back-actions">
+          <button class="btn-understood${isUnderstood?' done':''}" onclick="event.stopPropagation();toggleUnderstood('${concept.id}','${stepId}')">${isUnderstood?'✓ Understood!':'Understood!'}</button>
+          <button class="btn-learn-more" onclick="event.stopPropagation()">Learn More ↗</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderChecklistTab(template) {
+  const hasVisitedConcepts = true; // simplified
+  const answered = Object.keys(checklistAnswers).filter(k => k.startsWith(`${currentProg.id}-${template.id}-`)).length;
+  return `${!hasVisitedConcepts ? `<div class="checklist-soft-lock">🔓 We recommend reviewing the Core Concepts before completing this checklist.</div>` : ''}
+  <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px;font-weight:600">${answered} of ${template.checklist.length} items answered</div>
+  ${template.checklist.map(item => {
+    const key = `${currentProg.id}-${template.id}-${item.id}`;
+    const ans = checklistAnswers[key];
+    return `<div class="checklist-item${ans==='discuss'?' discuss':''}" id="cl-${key}">
+      <div class="checklist-q">${item.q}</div>
+      <div class="checklist-why"><span>Why this matters: </span>${item.why}</div>
+      <div class="checklist-answers">
+        ${['yes','no','not_relevant','discuss'].map(a => `<button class="checklist-answer-btn${ans===a?' selected-'+a.replace('not_relevant','nr').replace('discuss','discuss'):''}" onclick="setChecklistAnswer('${key}','${a}')">${a==='yes'?'✓ Yes':a==='no'?'✗ No':a==='not_relevant'?'Not relevant':'🤔 Discuss in session'}</button>`).join('')}
+      </div>
+    </div>`;
+  }).join('')}`;
+}
+
+// renderWorkbenchTab moved to new implementation below
+
+function renderParticipantJourney() {
+  return `<div class="stages-grid">
+    ${STAGES_DATA.map(st => {
+      const items = (currentProg.journey[st.id]||[]);
+      const iconKey = STAGE_ICONS_MAP[st.id];
+      return `<div class="stage-col">
+        <div class="stage-head" style="background:${st.bg}">
+          <img class="stage-icon" src="${window.LOADED_ASSETS ? LOADED_ASSETS[iconKey] : ''}" alt="${st.short}">
+          <div class="stage-lbl" style="color:${st.tx}">${st.label}</div>
+          <div class="stage-desc-txt" style="color:${st.tx}">${st.desc.replace(/<b>/g,'<b>').replace(/<\/b>/g,'</b>')}</div>
+        </div>
+        <div class="stage-body">
+          ${items.map((item,idx) => `<div class="stage-item"><span>${item}</span><button class="stage-item-del" onclick="removeJourneyItem('${st.id}',${idx})">×</button></div>`).join('')}
+          <button class="add-item-btn" onclick="addJourneyItem('${st.id}')">+ add item</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// renderDataCollection merged into renderOriginalForms (renamed) in new workbench implementation
+
+function renderNotesTab(template) {
+  const key = `matt-${template.id}`;
+  return `<div>
+    <div style="font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:8px">My Notes <span style="font-weight:400">(private — only visible to you)</span></div>
+    <textarea class="notes-area" placeholder="Use this space for your own notes, questions or reminders about this step..." onchange="notes['${key}']=this.value">${notes[key]||''}</textarea>
+    <div style="font-size:11px;color:var(--gray-400);margin-top:4px">Auto-saved</div>
+  </div>`;
+}
+
+function renderResourcesTab(template) {
+  if (template.resources.length === 0) return `<div class="empty-state" style="padding:28px"><div class="empty-state-icon">📚</div><p>No resources added for this step yet.</p></div>`;
+  return template.resources.map(r => `<div class="resource-item">
+    <div class="resource-icon">${r.type==='Video'?'🎬':'📄'}</div>
+    <div>
+      <div class="resource-title" onclick="window.open('${r.url}','_blank')">${r.title} ↗</div>
+      <div class="resource-desc">${r.desc}</div>
+      <div style="margin-top:4px"><span class="tag tag-gray" style="font-size:10px">${r.type}</span></div>
+    </div>
+  </div>`).join('');
+}
+
+// ─────────────────────────────────────────────
+// WORKBENCH VIEW
+// ─────────────────────────────────────────────
+function renderWorkbenchView() {
+  const container = document.getElementById('workbench-content');
+  container.innerHTML = STEP_TEMPLATES.map(t => `
+    <div class="wb-section">
+      <div class="wb-section-hdr">Step ${t.pos}: ${t.title}</div>
+      ${renderWorkbenchTab(t)}
+    </div>`).join('');
+}
+
+// ─────────────────────────────────────────────
+// MEMBERS
+// ─────────────────────────────────────────────
+function renderMembers() {
+  if (!currentOrg) return;
+  document.getElementById('members-page-sub').textContent = `Members of ${currentOrg.name}`;
+  const list = document.getElementById('members-list');
+  list.innerHTML = currentOrg.members.map((m,i) => `<div class="member-row">
+    <div class="avatar" style="background:${m.role==='manager'?'var(--purple)':'var(--gray-500)'}">${m.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+    <div style="flex:1"><div style="font-weight:700;font-size:13px">${m.name}</div><div style="font-size:12px;color:var(--gray-500)">${m.email}</div></div>
+    <span class="tag ${m.role==='manager'?'tag-purple':'tag-gray'}">${m.role==='manager'?'Manager':'Member'}</span>
+    <button class="btn btn-sm" style="border-color:#FCA5A5;color:var(--red)" onclick="removeMember(${i})">Remove</button>
+  </div>`).join('');
+}
+function removeMember(i) { currentOrg.members.splice(i,1); renderMembers(); }
+
+// ─────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────
+function renderDashboard() {
+  if (!currentOrg) return;
+  document.getElementById('dash-page-sub').textContent = `Onboarding health for ${currentOrg.name}`;
+  const orgProgs = programmes.filter(p => p.orgId === currentOrg.id);
+
+  // Table 1: User Understanding
+  const stepCols = STEP_TEMPLATES.map(t => `<th style="min-width:70px;text-align:center">Step ${t.pos}</th>`).join('');
+  const userRows = currentOrg.members.map(m => {
+    const cells = STEP_TEMPLATES.map(t => {
+      const pct = Math.floor(Math.random()*101);
+      const bg = pct===0 ? 'var(--gray-100)' : pct===100 ? 'var(--green-l)' : 'rgba(29,158,117,0.15)';
+      const tx = pct===0 ? 'var(--gray-400)' : 'var(--green-d)';
+      return `<td style="text-align:center"><span class="pct-cell" style="background:${bg};color:${tx}">${pct}%</span></td>`;
+    }).join('');
+    return `<tr><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="background:var(--purple);width:24px;height:24px;font-size:10px">${m.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div><span style="font-weight:600;font-size:13px">${m.name}</span></div></td>${cells}</tr>`;
+  }).join('');
+  document.getElementById('understanding-table').innerHTML = `<table class="dash-table"><thead><tr><th>User</th>${stepCols}</tr></thead><tbody>${userRows}</tbody></table>`;
+
+  // Table 2: Programme × Step
+  const progRows = orgProgs.map(p => {
+    const cells = p.steps.map((s,i) => {
+      const cl = s.status==='done'?'status-done':s.status==='in_progress'?'status-ip':'status-ns';
+      const lbl = s.status==='done'?'Done':s.status==='in_progress'?'In Prog':'Not Started';
+      const cl_answered = Object.keys(checklistAnswers).filter(k=>k.startsWith(`${p.id}-${i+1}-`)).length;
+      const cl_total = STEP_TEMPLATES[i].checklist.length;
+      return `<td style="text-align:center">
+        <span class="status-cell ${cl}" onclick="openProg('${p.id}')">${lbl}</span>
+        <div style="font-size:10px;color:var(--gray-500);margin-top:3px">${cl_answered}/${cl_total} ✓</div>
+      </td>`;
+    }).join('');
+    return `<tr><td style="font-weight:700;font-size:13px">${p.name}</td>${cells}</tr>`;
+  }).join('');
+  const stepHdrs = STEP_TEMPLATES.map(t=>`<th style="min-width:80px;text-align:center">Step ${t.pos}</th>`).join('');
+  document.getElementById('prog-step-table').innerHTML = `<table class="dash-table"><thead><tr><th>Programme</th>${stepHdrs}</tr></thead><tbody>${progRows}</tbody></table>`;
+
+  // Table 3: Duration
+  const durRows = orgProgs.map(p => {
+    const cells = p.steps.map(s => {
+      if (s.status !== 'done' || !s.startedAt || !s.completedAt) return `<td style="text-align:center;color:var(--gray-300)">—</td>`;
+      const days = Math.round((new Date(s.completedAt)-new Date(s.startedAt))/(1000*60*60*24));
+      const bg = days <= 7 ? 'var(--green-l)' : days <= 14 ? 'var(--amber-l)' : '#FEE2E2';
+      const tx = days <= 7 ? 'var(--green-d)' : days <= 14 ? '#92400E' : 'var(--red)';
+      return `<td style="text-align:center"><span class="health-cell" style="background:${bg};color:${tx}">${days}d</span></td>`;
+    }).join('');
+    return `<tr><td style="font-weight:700;font-size:13px">${p.name}</td>${cells}</tr>`;
+  }).join('');
+  document.getElementById('duration-table').innerHTML = `<table class="dash-table"><thead><tr><th>Programme</th>${stepHdrs}</tr></thead><tbody>${durRows}</tbody></table>`;
+}
+
+// ─────────────────────────────────────────────
+// ADMIN
+// ─────────────────────────────────────────────
+function renderAdmin() {
+  // Concepts
+  const allConcepts = STEP_TEMPLATES.flatMap(t => t.concepts.map(c => ({...c, step: t})));
+  document.getElementById('concepts-admin-tbody').innerHTML = allConcepts.map(c => `<tr>
+    <td style="font-weight:600">${c.title}</td>
+    <td>Step ${c.step.pos}: ${c.step.title.slice(0,30)}...</td>
+    <td><span class="tag tag-green">Active</span></td>
+    <td>1</td>
+    <td><button class="btn btn-sm btn-ghost">Edit</button> <button class="btn btn-sm btn-ghost" style="color:var(--red)">Deactivate</button></td>
+  </tr>`).join('');
+
+  // Checklists
+  const allItems = STEP_TEMPLATES.flatMap(t => t.checklist.map(c => ({...c, step:t})));
+  document.getElementById('checklist-admin-tbody').innerHTML = allItems.map(c => `<tr>
+    <td style="font-weight:600;max-width:300px">${c.q}</td>
+    <td>Step ${c.step.pos}</td>
+    <td style="font-size:12px;color:var(--gray-500);max-width:200px">${c.why.slice(0,60)}...</td>
+    <td><span class="tag tag-green">Active</span></td>
+    <td><button class="btn btn-sm btn-ghost">Edit</button> <button class="btn btn-sm btn-ghost" style="color:var(--red)">Deactivate</button></td>
+  </tr>`).join('');
+
+  // Reminders
+  const rules = [
+    {step:'Step 5: Import the data',days:14,subject:'Runway: {{programme_name}} — Import step update needed',active:true},
+    {step:'Step 5: Import the data',days:21,subject:'Runway: Escalation — {{programme_name}} Import step',active:true},
+    {step:'Step 1: Participant Journey',days:21,subject:'Runway: {{programme_name}} — Design step needs attention',active:false},
+  ];
+  document.getElementById('reminder-rules-list').innerHTML = rules.map(r => `<div class="rule-row">
+    <div class="rule-days">Day ${r.days}</div>
+    <div style="flex:1"><div style="font-weight:700;font-size:13px">${r.step}</div><div style="font-size:12px;color:var(--gray-500);margin-top:2px">${r.subject}</div></div>
+    <span class="tag ${r.active?'tag-green':'tag-gray'}">${r.active?'Active':'Inactive'}</span>
+    <button class="btn btn-sm btn-ghost">Edit</button>
+    <button class="btn btn-sm btn-ghost" style="color:var(--red)">Delete</button>
+  </div>`).join('');
+
+  // Step templates
+  document.getElementById('step-templates-tbody').innerHTML = STEP_TEMPLATES.map(t => `<tr>
+    <td style="font-weight:700">${t.pos}</td>
+    <td style="font-weight:600">${t.title}</td>
+    <td><span class="tag tag-purple">${t.phase}</span></td>
+    <td style="font-size:12px;color:var(--gray-600);max-width:250px">${t.keyDecision||'—'}</td>
+    <td><button class="btn btn-sm btn-ghost">Edit</button></td>
+  </tr>`).join('');
+
+  // Populate step selects
+  ['concept-step-select','checklist-step-select','rule-step-select'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = STEP_TEMPLATES.map(t => `<option value="${t.id}">Step ${t.pos}: ${t.title}</option>`).join('');
+  });
+}
+
+function adminTab(tab, btn) {
+  ['concepts','checklists','reminders','step-templates'].forEach(t => {
+    document.getElementById(`admin-tab-${t}`).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('#screen-admin .tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ─────────────────────────────────────────────
+// INTERACTIONS
+// ─────────────────────────────────────────────
+function toggleStep(templateId) {
+  expandedStep = expandedStep === templateId ? null : templateId;
+  renderAccordion();
+}
+
+function setStepTab(templateId, tab) {
+  activeStepTab[templateId] = tab;
+  renderAccordion();
+}
+
+function switchSubtab(btn, showId, hideId) {
+  document.getElementById(showId).style.display = 'block';
+  document.getElementById(hideId).style.display = 'none';
+  btn.parentElement.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setStatus(event, templateId, status) {
+  event.stopPropagation();
+  const stepIdx = templateId - 1;
+  const key = `${currentProg.id}-${templateId}`;
+  const decRequired = STEP_TEMPLATES[stepIdx].keyDecision;
+  if (status === 'done' && decRequired && !decisionsConfirmed[key]) {
+    alert('Please confirm the Key Decision before marking this step as Done.');
+    return;
+  }
+  currentProg.steps[stepIdx].status = status;
+  if (status === 'in_progress' && !currentProg.steps[stepIdx].startedAt) {
+    currentProg.steps[stepIdx].startedAt = new Date().toISOString().split('T')[0];
+  }
+  if (status === 'done') currentProg.steps[stepIdx].completedAt = new Date().toISOString().split('T')[0];
+  renderProg();
+}
+
+function setStatusFromOverview(progId, templateId, status) {
+  setStatus({stopPropagation:()=>{}}, templateId, status);
+}
+
+function confirmDecision(key) {
+  const textarea = document.getElementById('dec-'+key);
+  if (!textarea || !textarea.value.trim()) { alert('Please enter your decision before confirming.'); return; }
+  decisions[key] = textarea.value;
+  decisionsConfirmed[key] = true;
+  decisionsConfirmed[key+'_date'] = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  renderAccordion();
+}
+
+function reopenDecision(key) {
+  decisionsConfirmed[key] = false;
+  renderAccordion();
+}
+
+function flipTile(conceptId) {
+  if (!window._flipped) window._flipped = {};
+  window._flipped[conceptId] = !window._flipped[conceptId];
+  const tile = document.getElementById('tile-'+conceptId);
+  if (tile) tile.classList.toggle('flipped', window._flipped[conceptId]);
+}
+
+function toggleUnderstood(conceptId, stepId) {
+  const key = `matt-${conceptId}`;
+  understood[key] = !understood[key];
+  if (understood[key]) {
+    // celebration
+    const btn = event.target;
+    const rect = btn.getBoundingClientRect();
+    const burst = document.createElement('div');
+    burst.className = 'confetti-burst';
+    burst.textContent = '🎉';
+    burst.style.left = rect.left + 'px';
+    burst.style.top = rect.top + 'px';
+    document.body.appendChild(burst);
+    setTimeout(() => burst.remove(), 1000);
+  }
+  const tile = document.getElementById('tile-'+conceptId);
+  if (tile) tile.classList.toggle('understood', understood[key]);
+  // Update understood button text
+  const btn = event.target;
+  btn.textContent = understood[key] ? '✓ Understood!' : 'Understood!';
+  btn.classList.toggle('done', understood[key]);
+  // Re-render step header to update count
+  renderAccordion();
+}
+
+function setChecklistAnswer(key, answer) {
+  checklistAnswers[key] = answer;
+  const item = document.getElementById('cl-'+key);
+  if (item) {
+    item.classList.toggle('discuss', answer==='discuss');
+    item.querySelectorAll('.checklist-answer-btn').forEach(b => {
+      b.className = 'checklist-answer-btn';
+      const bAns = b.onclick ? '' : '';
+    });
+    // Re-render just this checklist
+    const parts = key.split('-');
+    const stepId = parseInt(parts[1]);
+    setStepTab(stepId, 'Checklist');
+  }
+}
+
+function addJourneyItem(stageId) {
+  const text = prompt(`Add item to ${stageId}:`);
+  if (text && text.trim()) {
+    if (!currentProg.journey[stageId]) currentProg.journey[stageId] = [];
+    currentProg.journey[stageId].push(text.trim());
+    setStepTab(1, activeStepTab[1] || 'Workbench');
+    renderAccordion();
+  }
+}
+
+function removeJourneyItem(stageId, idx) {
+  currentProg.journey[stageId].splice(idx, 1);
+  renderAccordion();
+}
+
+// ─────────────────────────────────────────────
+// MODALS
+// ─────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ─────────────────────────────────────────────
+// ASSET LOADING
+// ─────────────────────────────────────────────
+window.LOADED_ASSETS = {};
+
+async function loadAssets() {
+  // Load assets from the public/icons directory (works in deployed app)
+  // For prototype, we use fetch to load them
+  const assetMap = {
+    shield: '/icons/shield.png',
+    full_logo: '/icons/full_logo.png',
+    icon_signup: '/icons/icon_signup.png',
+    icon_assess: '/icons/icon_assess.png',
+    icon_assign: '/icons/icon_assign.png',
+    icon_inform: '/icons/icon_inform.png',
+    icon_provide: '/icons/icon_provide.png',
+    icon_reassess: '/icons/icon_reassess.png',
+    icon_complete: '/icons/icon_complete.png',
+  };
+
+  const results = await Promise.allSettled(
+    Object.entries(assetMap).map(async ([key, path]) => {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error('not found');
+      const blob = await res.blob();
+      return [key, URL.createObjectURL(blob)];
+    })
+  );
+
+  results.forEach((r, i) => {
+    const key = Object.keys(assetMap)[i];
+    if (r.status === 'fulfilled') {
+      window.LOADED_ASSETS[key] = r.value[1];
+    } else {
+      // Fallback: generate a placeholder SVG
+      window.LOADED_ASSETS[key] = generatePlaceholder(key);
+    }
+  });
+
+  // Apply to DOM elements
+  ['login-shield','tb-shield','footer-logo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.src = window.LOADED_ASSETS[id==='footer-logo'?'full_logo':'shield'];
+  });
+  document.getElementById('login-full-logo').src = window.LOADED_ASSETS.full_logo;
+}
+
+function generatePlaceholder(key) {
+  const colors = {shield:'#1D9E75',full_logo:'#2d3748',icon_signup:'#854F0B',icon_assess:'#185FA5',icon_assign:'#3B6D11',icon_inform:'#534AB7',icon_provide:'#0F6E56',icon_reassess:'#993556',icon_complete:'#5F5E5A'};
+  const labels = {shield:'M',full_logo:'Makerble',icon_signup:'1',icon_assess:'2',icon_assign:'3',icon_inform:'4',icon_provide:'5',icon_reassess:'6',icon_complete:'7'};
+  const c = colors[key]||'#999';
+  const l = labels[key]||'?';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="${c}22"/><text x="32" y="38" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="${l.length>2?14:20}" fill="${c}">${l}</text></svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(svg);
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+loadAssets().then(() => {
+  // Assets loaded, render login
+  document.getElementById('login-shield').src = window.LOADED_ASSETS.shield;
+  document.getElementById('tb-shield').src = window.LOADED_ASSETS.shield;
+  document.getElementById('login-full-logo').src = window.LOADED_ASSETS.full_logo;
+  document.getElementById('footer-logo').src = window.LOADED_ASSETS.full_logo;
+});
+
+// ─────────────────────────────────────────────
+// WORKBENCH STATE (new tabs)
+// ─────────────────────────────────────────────
+let wbState = {
+  // 1B Original Forms (renamed from Data Collection)
+  originalForms: [
+    {id:'of1',name:'Child Registration Form',stage:'signup',uploadedBy:'Pinky Khwiane',file:'child-reg-form.pdf',mcItems:[]},
+    {id:'of2',name:'Next of Kin Form',stage:'signup',uploadedBy:'Pinky Khwiane',file:'nok-form.pdf',mcItems:[]},
+    {id:'of3',name:'360° Screening Assessment',stage:'assess',uploadedBy:'Motloang Mohapi',file:'screening-assessment.pdf',mcItems:[]},
+    {id:'of4',name:'Termly Assessment Form',stage:'reassess',uploadedBy:'Amukelani Ngobeni',file:'termly-assessment.pdf',mcItems:[]},
+  ],
+  // 1C Challenges
+  challenges: {signup:[],assess:[],assign:[],inform:[],provide:[],reassess:[],complete:[]},
+  // 1D Makerble Content items
+  mcItems: [
+    {id:'mc1',name:'Bambanani Child Bio Form',type:'Contact Bio Form',originalForms:['of1','of2']},
+    {id:'mc2',name:'Bambanani Outcomes Survey',type:'Survey',originalForms:['of4']},
+    {id:'mc3',name:'Initial Screening Survey',type:'Survey',originalForms:['of3']},
+    {id:'mc4',name:'Bambanani Signup Page',type:'Signup Page',originalForms:['of1']},
+    {id:'mc5',name:'Bambanani Impact Framework',type:'Impact Framework',originalForms:[]},
+  ],
+  // 2A Reporting requirements
+  reportingReqs: {
+    'Activity/Engagement':['Total Attendances','Attendance Rate','Total Sessions Run','Number of Unique Participants'],
+    'Demographics':['Gender — NHS breakdown','Ethnicity — NHS breakdown','Age at Registration','Home Language'],
+    'Outcomes':['School Readiness Score','EGMA Baseline vs Endline','Social Development Rating'],
+    'Other':['Carer Satisfaction Score','Staff Notes submitted'],
+  },
+  // 2B Report types
+  reportTypes: ['Comic Relief End of Year','Children in Need Grant Baseline','DSD Quarterly Report'],
+  reportMatrix: {}, // key: `${req}|${reportType}` = bool
+  // 2D Demographics answer choices
+  demoAnswerChoices: {
+    'Gender — NHS breakdown': 'Male\nFemale\nNon-binary\nPrefer not to say\nOther',
+    'Ethnicity — NHS breakdown': 'African\nColoured\nIndian or Asian\nWhite\nOther',
+    'Age at Registration': '', // date field, no list
+    'Home Language': 'Zulu\nXhosa\nSotho\nAfrikaans\nEnglish\nOther',
+  },
+  demoIsListField: {
+    'Gender — NHS breakdown': true,
+    'Ethnicity — NHS breakdown': true,
+    'Age at Registration': false,
+    'Home Language': true,
+    'Carer Satisfaction Score': false,
+  },
+  // 3A Model
+  selectedModel: null,
+  // 3B Activities
+  activities: [
+    {id:'a1',name:'ECD Classes',desc:'Early childhood development sessions',image:null},
+    {id:'a2',name:'Nutritional Support',desc:'Daily meals programme',image:null},
+    {id:'a3',name:'Parent Workshops',desc:'Monthly caregiver sessions',image:null},
+  ],
+  locations: [
+    {id:'l1',name:'Tembisa Hub'},
+    {id:'l2',name:'Alexandra Centre'},
+    {id:'l3',name:'Soweto Branch'},
+  ],
+  activityLocations: {'a1-l1':true,'a1-l2':true,'a2-l1':true,'a2-l2':true,'a2-l3':true,'a3-l1':true},
+  // 4A Build status config
+  buildStatuses: [
+    {id:'bs1',name:'To do',color:'#9CA3AF'},
+    {id:'bs2',name:'In progress',color:'#F59E0B'},
+    {id:'bs3',name:'Awaiting review',color:'#3B82F6'},
+    {id:'bs4',name:'Amends needed',color:'#EF4444'},
+    {id:'bs5',name:'Approved',color:'#1D9E75'},
+  ],
+  buildItems: [], // computed from mcItems
+  buildStatuses2: { mc1:'bs5',mc2:'bs3',mc3:'bs2',mc4:'bs2',mc5:'bs1' },
+  // 5A Migration plan
+  migrationRows: [
+    {id:'mr1',file:'bambanani_contacts_2023.csv',type:['Contacts'],bioForms:['mc1'],surveys:[],frameworks:[],rows:247,destinations:['a1-l1','a1-l2'],team:'Makerble Customer Success',importer:'Matt Kepple',status:'bs3'},
+    {id:'mr2',file:'termly_assessments_t1.csv',type:['Survey Responses'],bioForms:[],surveys:['mc2'],frameworks:['mc5'],rows:189,destinations:['a1-l1'],team:'Makerble Inhouse',importer:'Dev Team',status:'bs1'},
+  ],
+  // 6A Scenarios
+  scenarios: [
+    {id:'s1',desc:'Register a new child using the Bambanani Child Bio Form including Next of Kin details',estTime:'00:20',video:'',tour:'',userGroups:{'Case Workers':true,'Receptionists':true,'Managers':false}},
+    {id:'s2',desc:'Complete and submit a Termly Assessment survey for a child',estTime:'00:15',video:'',tour:'',userGroups:{'Case Workers':true,'Receptionists':false,'Managers':false}},
+    {id:'s3',desc:'View a child\'s profile and check their outcomes progress',estTime:'00:10',video:'',tour:'',userGroups:{'Case Workers':true,'Receptionists':false,'Managers':true}},
+    {id:'s4',desc:'Export an attendance report for a project',estTime:'00:25',video:'',tour:'',userGroups:{'Case Workers':false,'Receptionists':false,'Managers':true}},
+    {id:'s5',desc:'Bulk-import new child registrations from a CSV file',estTime:'00:30',video:'',tour:'',userGroups:{'Case Workers':false,'Receptionists':false,'Managers':true}},
+  ],
+  userGroups: ['Case Workers','Receptionists','Managers'],
+  // 6B People
+  people: [
+    {id:'p1',name:'Pinky Khwiane',email:'pinky@afrikatikkun.org',location:'Tembisa Hub',champion:true,groups:{'Case Workers':false,'Receptionists':false,'Managers':true}},
+    {id:'p2',name:'Motloang Mohapi',email:'motloang@afrikatikkun.org',location:'Alexandra Centre',champion:false,groups:{'Case Workers':true,'Receptionists':false,'Managers':false}},
+    {id:'p3',name:'Amukelani Ngobeni',email:'amukelani@afrikatikkun.org',location:'Tembisa Hub',champion:true,groups:{'Case Workers':true,'Receptionists':false,'Managers':false}},
+    {id:'p4',name:'Teresa Michael',email:'teresa@afrikatikkun.org',location:'Soweto Branch',champion:false,groups:{'Case Workers':false,'Receptionists':false,'Managers':true}},
+    {id:'p5',name:'Sandra Dlamini',email:'sandra@afrikatikkun.org',location:'Alexandra Centre',champion:true,groups:{'Case Workers':true,'Receptionists':true,'Managers':false}},
+    {id:'p6',name:'Joseph Nkosi',email:'joseph@afrikatikkun.org',location:'Tembisa Hub',champion:false,groups:{'Case Workers':false,'Receptionists':true,'Managers':false}},
+  ],
+  // 6C Feedback
+  championFeedback: {
+    's1':{'p1':{status:'Approved',amends:'',other:''},'p3':{status:'Amends needed',amends:'The bio form loaded slowly on the shared laptop — took 8 seconds. Could be optimised.',other:''},'p5':{status:'Approved',amends:'',other:'Loved the auto-save!'}},
+    's2':{'p2':{status:'Testing in progress',amends:'',other:''},'p3':{status:'Not tested',amends:'',other:''}},
+    's3':{'p1':{status:'Approved',amends:'',other:''},'p4':{status:'Approved',amends:'',other:'Clean and intuitive.'}},
+  },
+  // 7A Modules
+  trainingModules: ['Module 1: Registration','Module 2: Assessments','Module 3: Reporting'],
+  moduleAssignments: {
+    's1-Module 1: Registration':true,'s2-Module 2: Assessments':true,
+    's3-Module 2: Assessments':true,'s4-Module 3: Reporting':true,'s5-Module 3: Reporting':true,
+  },
+  // 7B Training calendar
+  trainingSessions: [
+    {id:'ts1',start:'2026-07-14 09:00',end:'2026-07-14 11:00',modules:['Module 1: Registration'],userGroup:'Case Workers',people:['p2','p3','p5']},
+    {id:'ts2',start:'2026-07-15 09:00',end:'2026-07-15 12:00',modules:['Module 2: Assessments','Module 3: Reporting'],userGroup:'Managers',people:['p1','p4']},
+  ],
+  // Cross-check notes
+  crossCheckNotes: {},
+};
+
+// ─────────────────────────────────────────────
+// WORKBENCH TAB ROUTER (replaces old renderWorkbenchTab)
+// ─────────────────────────────────────────────
+function renderWorkbenchTab(template) {
+  const tabConfigs = {
+    1: [
+      {id:'pj',label:'Participant Journey',fn:()=>renderParticipantJourney()},
+      {id:'of',label:'Original Forms',fn:()=>renderOriginalForms()},
+      {id:'ch',label:'Challenges',fn:()=>renderChallenges()},
+      {id:'cr',label:'Content Required',fn:()=>renderContentRequired()},
+    ],
+    2: [
+      {id:'rr',label:'Reporting Requirements',fn:()=>render2A()},
+      {id:'rt',label:'Requirements per Report',fn:()=>render2B()},
+      {id:'cc',label:'Cross Check',fn:()=>render2C()},
+      {id:'dem',label:'Demographics',fn:()=>render2D()},
+    ],
+    3: [
+      {id:'mdl',label:'Pick your model',fn:()=>render3A()},
+      {id:'act',label:'Activities',fn:()=>render3B()},
+    ],
+    4: [
+      {id:'bst',label:'Build Status',fn:()=>render4A()},
+      {id:'pld',label:'Platform Designer',fn:()=>render4B()},
+    ],
+    5: [
+      {id:'mig',label:'Migration Plan',fn:()=>render5A()},
+    ],
+    6: [
+      {id:'scn',label:'Scenarios',fn:()=>render6A()},
+      {id:'ugp',label:'User Groups',fn:()=>render6B()},
+      {id:'fbs',label:'Feedback per Scenario',fn:()=>render6C()},
+    ],
+    7: [
+      {id:'trm',label:'Training Modules',fn:()=>render7A()},
+      {id:'trc',label:'Training Calendar',fn:()=>render7B()},
+    ],
+    8: [
+      {id:'lrn',label:'Launch Readiness',fn:()=>render8A()},
+    ],
+  };
+  const tabs = tabConfigs[template.pos];
+  if (!tabs) return `<div class="empty-state" style="padding:28px"><div class="empty-state-icon">🔧</div><p style="color:var(--gray-500);font-size:13px">Workbench tools for this step are coming soon.</p></div>`;
+
+  const containerId = `wb-tab-content-${template.pos}`;
+  const activeKey = `wbActiveTab_${template.pos}`;
+  if (!window[activeKey]) window[activeKey] = tabs[0].id;
+
+  return `<div class="subtabs" id="wb-subtabs-${template.pos}">
+    ${tabs.map(t => `<button class="subtab${window[activeKey]===t.id?' active':''}" onclick="switchWbTab(${template.pos},'${t.id}')">${t.label}</button>`).join('')}
+  </div>
+  <div id="${containerId}">
+    ${tabs.find(t=>t.id===window[activeKey]).fn()}
+  </div>`;
+}
+
+function switchWbTab(stepPos, tabId) {
+  const key = `wbActiveTab_${stepPos}`;
+  window[key] = tabId;
+  // Re-render the whole step body
+  const template = STEP_TEMPLATES.find(t=>t.pos===stepPos);
+  const step = currentProg.steps.find(s=>s.templateId===template.id);
+  setStepTab(template.id, 'Workbench');
+}
+
+// ─────────────────────────────────────────────
+// STEP 1 WORKBENCH TABS
+// ─────────────────────────────────────────────
+function renderOriginalForms() {
+  // Renamed from renderDataCollection
+  const allItems = [];
+  STAGES_DATA.forEach(st => {
+    (currentProg.journey[st.id]||[]).forEach(item => allItems.push({stage:st,item}));
+  });
+  if (allItems.length === 0) return `<div class="info-bar">ℹ️ Add items in the Participant Journey tab first, then upload your Original Forms here.</div>`;
+  return `<table class="wb-table"><thead><tr><th style="width:90px">Stage</th><th>Item / Form name</th><th>Responsible person</th><th>Files / Original Forms</th></tr></thead><tbody>
+    ${allItems.map((row,ri) => `<tr>
+      <td><span class="stage-pill" style="background:${row.stage.bg};color:${row.stage.tx}">${row.stage.short}</span></td>
+      <td style="font-size:12px;font-weight:600">${row.item}</td>
+      <td><input class="resp-input" placeholder="Who is responsible?" style="width:130px"></td>
+      <td>
+        <span class="file-chip">📄 example-form.pdf</span>
+        <div><label class="upload-label">↑ Add file</label></div>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function renderChallenges() {
+  return `<div class="stages-grid">
+    ${STAGES_DATA.map(st => {
+      const items = wbState.challenges[st.id]||[];
+      return `<div class="stage-col">
+        <div class="stage-head" style="background:${st.bg}">
+          <div class="stage-lbl" style="color:${st.tx}">${st.label}</div>
+          <div class="stage-desc-txt" style="color:${st.tx}">Known challenges at this stage</div>
+        </div>
+        <div class="stage-body">
+          ${items.map((item,idx) => `<div class="stage-item"><span>${item}</span><button class="stage-item-del" onclick="removeChallenge('${st.id}',${idx})">×</button></div>`).join('')}
+          <button class="add-item-btn" onclick="addChallenge('${st.id}')">+ add challenge</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function addChallenge(stageId) {
+  const text = prompt(`Add a challenge for the ${stageId} stage:`);
+  if (text && text.trim()) {
+    wbState.challenges[stageId].push(text.trim());
+    switchWbTab(1, 'ch');
+  }
+}
+function removeChallenge(stageId, idx) {
+  wbState.challenges[stageId].splice(idx,1);
+  switchWbTab(1, 'ch');
+}
+
+function renderContentRequired() {
+  const forms = wbState.originalForms;
+  const stageMap = {};
+  STAGES_DATA.forEach(s => stageMap[s.id] = s);
+  const mcByForm = {};
+  forms.forEach(f => mcByForm[f.id] = wbState.mcItems.filter(m => m.originalForms.includes(f.id)));
+
+  return `<div class="three-pane">
+    <div class="pane">
+      <div class="pane-hdr">📄 Original Forms</div>
+      <div class="pane-body">
+        ${forms.map(f => {
+          const mc = mcByForm[f.id];
+          const st = stageMap[f.stage];
+          return `<div class="orig-form-tile">
+            <div class="orig-form-tile-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+              <span style="flex:1;font-size:12px;font-weight:700">${f.name}</span>
+              <span class="tag tag-gray" style="font-size:10px">${st?st.short:'?'}</span>
+            </div>
+            <div class="orig-form-tile-body">
+              <div class="orig-form-meta">Uploaded by: ${f.uploadedBy}</div>
+              <div style="margin-bottom:6px;font-size:11px;font-weight:700;color:var(--gray-500)">Makerble Content:</div>
+              ${mc.map(m=>`<span class="mc-name-chip">✦ ${m.name}</span>`).join('')}
+              <button class="mc-add-btn" onclick="openMcSidebar('${f.id}')">+ Add</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="pane">
+      <div class="pane-hdr">👁 Viewer</div>
+      <div class="pane-body" style="display:flex;flex-direction:column">
+        <select class="viewer-select" onchange="updateViewer(this.value)">
+          ${forms.map(f=>`<option value="${f.id}">${f.name}</option>`).join('')}
+        </select>
+        <div class="viewer-doc" id="viewer-doc-content" style="flex:1">
+          <div style="text-align:center;padding:24px;color:var(--gray-300);font-size:32px">📄</div>
+          <div style="text-align:center;font-weight:700;color:var(--gray-600);margin-bottom:8px">${forms[0]?.name||''}</div>
+          <div style="text-align:center;font-size:11px;color:var(--gray-400);margin-bottom:20px">${forms[0]?.file||''}</div>
+          <div style="border:1px dashed var(--gray-200);border-radius:8px;padding:16px;color:var(--gray-500);font-size:11px;line-height:1.8">
+            <strong>Child Registration Form — Sample Preview</strong><br><br>
+            Child's Full Name: _______________<br>
+            Date of Birth: _______________<br>
+            Gender: □ Male □ Female<br>
+            Home Language: _______________<br>
+            Dietary Requirements: _______________<br>
+            Road to Health Card #: _______________<br><br>
+            <strong>Section B — Parent/Guardian Details</strong><br>
+            Full Name: _______________<br>
+            Relationship: _______________<br>
+            Contact Number: _______________<br>
+            ID Number: _______________<br><br>
+            <em style="color:var(--gray-400)">[In production: the uploaded PDF or image file renders here with full scrolling]</em>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pane" id="mc-sidebar-pane">
+      <div class="pane-hdr">✦ Makerble Content</div>
+      <div class="pane-body" id="mc-sidebar-body">
+        <div class="empty-state" style="padding:24px">
+          <div class="empty-state-icon" style="font-size:28px">✦</div>
+          <p>Click "+ Add" on an Original Form to define the Makerble Content that will replace it.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function openMcSidebar(formId) {
+  const form = wbState.originalForms.find(f=>f.id===formId);
+  const existing = wbState.mcItems.filter(m=>m.originalForms.includes(formId));
+  const typeOptions = ['Contact Bio Form','Survey','Signup Page','Event Creation Form','Project Creation Form','Guest Booking Details Form','Case Form','Impact Framework'];
+  const formOptions = wbState.originalForms.map(f=>`<option value="${f.id}" ${f.id===formId?'selected':''}>${f.name}</option>`).join('');
+  const pane = document.getElementById('mc-sidebar-body');
+  if (!pane) return;
+  pane.innerHTML = `
+    <div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:12px">For: <span style="color:var(--purple)">${form.name}</span></div>
+    <div id="mc-tiles-container">
+      ${existing.map((m,i) => renderMcTile(m,i,typeOptions,formOptions)).join('')}
+      ${renderMcTile(null,existing.length,typeOptions,formOptions)}
+    </div>
+    <button class="add-col-btn" style="margin-top:8px;width:100%" onclick="addMcTile('${formId}','${typeOptions.join('|')}')">+ Add more content</button>
+  `;
+}
+
+function renderMcTile(mc, idx, typeOptions, formOptions) {
+  return `<div class="mc-content-tile">
+    <div class="form-row"><label class="form-label">Name of Makerble Content</label>
+      <input class="input" value="${mc?mc.name:''}" placeholder="e.g. Bambanani Child Bio Form" onchange="updateMcName(${idx},this.value)">
+    </div>
+    <div class="form-row"><label class="form-label">Type</label>
+      <select class="select">${typeOptions.map(t=>`<option${mc&&mc.type===t?' selected':''}>${t}</option>`).join('')}</select>
+    </div>
+    <div class="form-row"><label class="form-label">Original Form(s) it's based on</label>
+      <select class="select" multiple style="height:70px">${formOptions}</select>
+    </div>
+  </div>`;
+}
+
+function updateViewer(formId) {
+  const form = wbState.originalForms.find(f=>f.id===formId);
+  const el = document.getElementById('viewer-doc-content');
+  if (el && form) {
+    el.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray-300);font-size:32px">📄</div>
+      <div style="text-align:center;font-weight:700;color:var(--gray-600);margin-bottom:8px">${form.name}</div>
+      <div style="text-align:center;font-size:11px;color:var(--gray-400);margin-bottom:20px">${form.file}</div>
+      <div style="border:1px dashed var(--gray-200);border-radius:8px;padding:16px;color:var(--gray-500);font-size:11px;line-height:1.8">
+        <strong>${form.name} — Sample Preview</strong><br><br>
+        <em style="color:var(--gray-400)">[In production: the uploaded file renders here with full scrolling support. Supports PDF, image files, and Word documents (Word files show a download fallback).]</em>
+      </div>`;
+  }
+}
+
+// ─────────────────────────────────────────────
+// STEP 2 WORKBENCH TABS
+// ─────────────────────────────────────────────
+function render2A() {
+  const cats = Object.keys(wbState.reportingReqs);
+  const colors = {'Activity/Engagement':'#E0F2FE','Demographics':'#F0FDF4','Outcomes':'#FDF4FF','Other':'#FFF7ED'};
+  const textColors = {'Activity/Engagement':'#0C4A6E','Demographics':'#14532D','Outcomes':'#581C87','Other':'#7C2D12'};
+  return `<div class="report-columns">
+    ${cats.map(cat => `<div class="report-col-card">
+      <div class="report-col-hdr" style="background:${colors[cat]||'var(--gray-50)'};color:${textColors[cat]||'var(--gray-700)'}">
+        ${cat}
+      </div>
+      <div class="report-col-body" id="req-col-${cat.replace(/[^a-z]/gi,'_')}">
+        ${(wbState.reportingReqs[cat]||[]).map((req,i)=>`<div class="req-chip">
+          <span>${req}</span>
+          <button onclick="removeReq('${cat}',${i})">×</button>
+        </div>`).join('')}
+        <input class="req-add-input" placeholder="+ Add requirement…" onkeydown="if(event.key==='Enter'&&this.value.trim()){addReq('${cat}',this.value.trim());this.value=''}">
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function addReq(cat, text) {
+  if (!wbState.reportingReqs[cat]) wbState.reportingReqs[cat] = [];
+  wbState.reportingReqs[cat].push(text);
+  switchWbTab(2,'rr');
+}
+function removeReq(cat, idx) {
+  wbState.reportingReqs[cat].splice(idx,1);
+  switchWbTab(2,'rr');
+}
+
+function render2B() {
+  const allReqs = [];
+  Object.entries(wbState.reportingReqs).forEach(([cat,reqs])=>reqs.forEach(r=>allReqs.push({name:r,cat})));
+  const types = wbState.reportTypes;
+  return `<div class="wb-table-wrap">
+    <table class="wb-table">
+      <thead><tr>
+        <th class="sticky-col" style="min-width:200px">Requirement</th>
+        <th class="sticky-col" style="left:200px;min-width:130px">Category</th>
+        ${types.map(t=>`<th style="min-width:120px;text-align:center">${t}</th>`).join('')}
+        <th><button class="add-col-btn" onclick="addReportType()">+ Add report type</button></th>
+      </tr></thead>
+      <tbody>
+        ${allReqs.map(req=>`<tr>
+          <td class="sticky-col" style="font-weight:600;font-size:12px">${req.name}</td>
+          <td class="sticky-col" style="left:200px"><span class="tag tag-purple" style="font-size:10px">${req.cat}</span></td>
+          ${types.map(t=>`<td class="cb-cell"><input type="checkbox" ${wbState.reportMatrix[req.name+'|'+t]?'checked':''} onchange="wbState.reportMatrix['${req.name}|${t}']=this.checked"></td>`).join('')}
+          <td></td>
+        </tr>`).join('')}
+        <tr><td class="sticky-col" colspan="${2+types.length+1}"><button class="add-row-btn" onclick="addReqFromTable()">+ Add requirement</button></td></tr>
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function addReportType() {
+  const name = prompt('Name this report type (e.g. "Comic Relief Q2 Report"):');
+  if (name && name.trim()) { wbState.reportTypes.push(name.trim()); switchWbTab(2,'rt'); }
+}
+function addReqFromTable() {
+  const name = prompt('Requirement name:');
+  if (!name) return;
+  const cat = prompt('Category (Activity/Engagement, Demographics, Outcomes, or Other):') || 'Other';
+  if (!wbState.reportingReqs[cat]) wbState.reportingReqs[cat] = [];
+  wbState.reportingReqs[cat].push(name.trim());
+  switchWbTab(2,'rt');
+}
+
+function render2C() {
+  const allReqs = [];
+  Object.entries(wbState.reportingReqs).forEach(([cat,reqs])=>reqs.forEach(r=>allReqs.push({name:r,cat})));
+  const mcs = wbState.mcItems;
+  return `<div>
+    <div class="info-bar">Tick each cell to confirm a reporting requirement is covered by that Makerble Content item. Rows with no ticks are highlighted in red — these need attention.</div>
+    <div class="wb-table-wrap">
+      <table class="wb-table">
+        <thead><tr>
+          <th class="sticky-col" style="min-width:220px">Reporting Requirement</th>
+          ${mcs.map(m=>`<th style="min-width:100px;text-align:center;font-size:10px">${m.name}</th>`).join('')}
+          <th style="min-width:60px">Fix</th>
+        </tr></thead>
+        <tbody>
+          ${allReqs.map(req=>{
+            const anyTick = mcs.some(m=>wbState.reportMatrix[req.name+'|mc_'+m.id]);
+            return `<tr class="${anyTick?'':'zero-coverage'}">
+              <td class="sticky-col" style="font-weight:600;font-size:12px">${req.name}${!anyTick?` <span style="color:var(--red);font-size:10px">⚠ Not covered</span>`:''}
+              <br><span class="tag tag-purple" style="font-size:9px">${req.cat}</span></td>
+              ${mcs.map(m=>`<td class="cb-cell"><input type="checkbox" ${wbState.reportMatrix[req.name+'|mc_'+m.id]?'checked':''} onchange="wbState.reportMatrix['${req.name}|mc_${m.id}']=this.checked;switchWbTab(2,'cc')"></td>`).join('')}
+              <td><button class="fix-btn${wbState.crossCheckNotes[req.name]?' has-note':''}" onclick="openFixNote('${req.name}')">📝 Fix</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function openFixNote(reqName) {
+  const existing = wbState.crossCheckNotes[reqName]||'';
+  const note = prompt(`Fix note for "${reqName}":\n\nHow will this gap be addressed?`, existing);
+  if (note !== null) { wbState.crossCheckNotes[reqName] = note; switchWbTab(2,'cc'); }
+}
+
+function render2D() {
+  const demoReqs = wbState.reportingReqs['Demographics']||[];
+  return `<div>
+    <p style="font-size:12px;color:var(--gray-500);margin-bottom:16px">Specify the answer choices for List-type demographic fields. Fields driven by dates (e.g. Age) do not need answer choices.</p>
+    <div class="wb-table-wrap">
+      <table class="wb-table">
+        <thead><tr><th style="min-width:180px">Demographic</th><th style="min-width:80px;text-align:center">List field?</th><th>Answer Choices</th></tr></thead>
+        <tbody>
+          ${demoReqs.map(req=>{
+            const isList = wbState.demoIsListField[req];
+            const choices = wbState.demoAnswerChoices[req]||'';
+            return `<tr>
+              <td style="font-weight:600;font-size:12px">${req}</td>
+              <td class="cb-cell"><input type="checkbox" ${isList?'checked':''} onchange="wbState.demoIsListField['${req}']=this.checked;switchWbTab(2,'dem')"></td>
+              <td>
+                ${isList ? (choices
+                  ? `<span style="font-size:11px;color:var(--gray-700)">${choices.split('\n').join(' · ')}</span> <button class="fix-btn" onclick="editDemoChoices('${req}')">Edit</button>`
+                  : `<button class="fix-btn" onclick="editDemoChoices('${req}')">+ Add choices</button>`)
+                : `<span style="font-size:11px;color:var(--gray-400);font-style:italic">n/a — not a list field</span>`}
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+function editDemoChoices(req) {
+  const current = wbState.demoAnswerChoices[req]||'';
+  const result = prompt(`Answer choices for "${req}" (one per line):`, current);
+  if (result !== null) { wbState.demoAnswerChoices[req]=result; switchWbTab(2,'dem'); }
+}
+
+// ─────────────────────────────────────────────
+// STEP 3 WORKBENCH TABS
+// ─────────────────────────────────────────────
+function render3A() {
+  const models = [
+    {id:'1-1',title:'1 Activity in 1 Location',desc:'A single activity running in one location. The simplest possible structure — one project, one album.',svg:renderModelSvg1x1()},
+    {id:'several-1',title:'Several Activities in 1 Location',desc:'Multiple activities all happening in the same location. One album (location) groups several projects (activities).',svg:renderModelSvgSeveralActivities1Loc()},
+    {id:'1-several',title:'1 Activity in Several Locations',desc:'One activity delivered in multiple locations. One album (activity) groups several projects (one per location).',svg:renderModelSvg1ActivitySeveralLoc()},
+    {id:'several-several',title:'Several Activities in Several Locations',desc:'The most complex model — multiple activities across multiple locations, with albums for both dimensions.',svg:renderModelSvgSeveralSeveral()},
+  ];
+  return `<div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;max-width:600px">Choose the model that best describes how your programme is structured. This determines how your projects and albums will be set up in Makerble.</p>
+    <div class="model-grid">
+      ${models.map(m=>`<div class="model-card${wbState.selectedModel===m.id?' selected':''}" onclick="selectModel('${m.id}')">
+        ${m.svg}
+        <div class="model-card-title">${m.title}</div>
+        <div class="model-card-desc">${m.desc}</div>
+        ${wbState.selectedModel===m.id?`<div style="margin-top:12px"><span class="tag tag-green">✓ Selected</span></div>`:''}
+      </div>`).join('')}
+    </div>
+    ${wbState.selectedModel?`<div class="info-bar" style="margin-top:20px;max-width:900px">✓ Model selected: <strong>${models.find(m=>m.id===wbState.selectedModel)?.title}</strong>. Head to the Activities tab to define your activities and locations.</div>`:''}
+  </div>`;
+}
+
+function selectModel(id) {
+  wbState.selectedModel = id;
+  switchWbTab(3,'mdl');
+}
+
+function renderModelSvg1x1() {
+  return `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;height:120px;margin:0 auto;display:block">
+    <rect x="60" y="8" width="80" height="44" rx="4" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="100" y="24" text-anchor="middle" font-size="8" fill="#6B7280" font-family="Quicksand,sans-serif">ALBUM</text>
+    <rect x="68" y="28" width="64" height="16" rx="3" fill="#DBEAFE"/>
+    <text x="100" y="40" text-anchor="middle" font-size="8" fill="#1E40AF" font-weight="700" font-family="Quicksand,sans-serif">Location 1</text>
+    <line x1="100" y1="52" x2="100" y2="80" stroke="#9CA3AF" stroke-width="1.5"/>
+    <rect x="40" y="80" width="120" height="52" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+    <text x="100" y="96" text-anchor="middle" font-size="7" fill="#6B7280" font-family="Quicksand,sans-serif">PROJECT</text>
+    <rect x="52" y="100" width="96" height="24" rx="3" fill="#7C3AED"/>
+    <text x="100" y="117" text-anchor="middle" font-size="9" fill="#fff" font-weight="700" font-family="Quicksand,sans-serif">Activity A · Location 1</text>
+  </svg>`;
+}
+
+function renderModelSvgSeveralActivities1Loc() {
+  return `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;height:130px;margin:0 auto;display:block">
+    <rect x="60" y="4" width="80" height="42" rx="4" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="100" y="19" text-anchor="middle" font-size="7" fill="#6B7280" font-family="Quicksand,sans-serif">ALBUM</text>
+    <rect x="68" y="22" width="64" height="16" rx="3" fill="#DBEAFE"/>
+    <text x="100" y="34" text-anchor="middle" font-size="8" fill="#1E40AF" font-weight="700" font-family="Quicksand,sans-serif">Location 1</text>
+    <line x1="70" y1="46" x2="30" y2="100" stroke="#9CA3AF" stroke-width="1"/>
+    <line x1="100" y1="46" x2="100" y2="100" stroke="#9CA3AF" stroke-width="1"/>
+    <line x1="130" y1="46" x2="170" y2="100" stroke="#9CA3AF" stroke-width="1"/>
+    <rect x="6" y="100" width="48" height="48" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+    <text x="30" y="113" text-anchor="middle" font-size="6" fill="#6B7280" font-family="Quicksand,sans-serif">PROJECT</text>
+    <rect x="10" y="116" width="40" height="26" rx="3" fill="#9D174D"/>
+    <text x="30" y="127" text-anchor="middle" font-size="7" fill="#fff" font-weight="700" font-family="Quicksand,sans-serif">Activity A</text>
+    <text x="30" y="137" text-anchor="middle" font-size="6" fill="#FCA5A5" font-family="Quicksand,sans-serif">Location 1</text>
+    <rect x="76" y="100" width="48" height="48" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+    <text x="100" y="113" text-anchor="middle" font-size="6" fill="#6B7280" font-family="Quicksand,sans-serif">PROJECT</text>
+    <rect x="80" y="116" width="40" height="26" rx="3" fill="#92400E"/>
+    <text x="100" y="127" text-anchor="middle" font-size="7" fill="#fff" font-weight="700" font-family="Quicksand,sans-serif">Activity B</text>
+    <text x="100" y="137" text-anchor="middle" font-size="6" fill="#FCD34D" font-family="Quicksand,sans-serif">Location 1</text>
+    <rect x="146" y="100" width="48" height="48" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+    <text x="170" y="113" text-anchor="middle" font-size="6" fill="#6B7280" font-family="Quicksand,sans-serif">PROJECT</text>
+    <rect x="150" y="116" width="40" height="26" rx="3" fill="#075985"/>
+    <text x="170" y="127" text-anchor="middle" font-size="7" fill="#fff" font-weight="700" font-family="Quicksand,sans-serif">Activity C</text>
+    <text x="170" y="137" text-anchor="middle" font-size="6" fill="#BAE6FD" font-family="Quicksand,sans-serif">Location 1</text>
+  </svg>`;
+}
+
+function renderModelSvg1ActivitySeveralLoc() {
+  return `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;height:130px;margin:0 auto;display:block">
+    <rect x="60" y="4" width="80" height="42" rx="4" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="100" y="19" text-anchor="middle" font-size="7" fill="#6B7280" font-family="Quicksand,sans-serif">ALBUM</text>
+    <rect x="68" y="22" width="64" height="16" rx="3" fill="#FCE7F3"/>
+    <text x="100" y="34" text-anchor="middle" font-size="8" fill="#9D174D" font-weight="700" font-family="Quicksand,sans-serif">Activity A</text>
+    <line x1="70" y1="46" x2="30" y2="100" stroke="#9CA3AF" stroke-width="1"/>
+    <line x1="100" y1="46" x2="100" y2="100" stroke="#9CA3AF" stroke-width="1"/>
+    <line x1="130" y1="46" x2="170" y2="100" stroke="#9CA3AF" stroke-width="1"/>
+    <rect x="6" y="100" width="48" height="48" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+    <text x="30" y="113" text-anchor="middle" font-size="6" fill="#6B7280" font-family="Quicksand,sans-serif">PROJECT</text>
+    <rect x="10" y="116" width="40" height="26" rx="3" fill="#9D174D"/>
+    <text x="30" y="127" text-anchor="middle" font-size="7" fill="#fff" font-weight="700" font-family="Quicksand,sans-serif">Activity A</text>
+    <text x="30" y="137" text-anchor="middle" font-size="6" fill="#DBEAFE" font-family="Quicksand,sans-serif">Location 1</text>
+    <rect x="76" y="100" width="48" height="48" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+    <text x="100" y="113" text-anchor="middle" font-size="6" fill="#6B7280" font-family="Quicksand,sans-serif">PROJECT</text>
+    <rect x="80" y="116" width="40" height="26" rx="3" fill="#9D174D"/>
+    <text x="100" y="127" text-anchor="middle" font-size="7" fill="#fff" font-weight="700" font-family="Quicksand,sans-serif">Activity A</text>
+    <text x="100" y="137" text-anchor="middle" font-size="6" fill="#D1FAE5" font-family="Quicksand,sans-serif">Location 2</text>
+    <rect x="146" y="100" width="48" height="48" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+    <text x="170" y="113" text-anchor="middle" font-size="6" fill="#6B7280" font-family="Quicksand,sans-serif">PROJECT</text>
+    <rect x="150" y="116" width="40" height="26" rx="3" fill="#9D174D"/>
+    <text x="170" y="127" text-anchor="middle" font-size="7" fill="#fff" font-weight="700" font-family="Quicksand,sans-serif">Activity A</text>
+    <text x="170" y="137" text-anchor="middle" font-size="6" fill="#D1FAE5" font-family="Quicksand,sans-serif">Location 3</text>
+  </svg>`;
+}
+
+function renderModelSvgSeveralSeveral() {
+  // Mini version of the grid diagram
+  return `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;height:130px;margin:0 auto;display:block">
+    <!-- 3 activity albums top row -->
+    <rect x="4" y="4" width="42" height="26" rx="3" fill="none" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="25" y="14" text-anchor="middle" font-size="5.5" fill="#6B7280" font-family="Quicksand,sans-serif">ALBUM</text>
+    <rect x="7" y="17" width="36" height="10" rx="2" fill="#FCE7F3"/>
+    <text x="25" y="25" text-anchor="middle" font-size="6" fill="#9D174D" font-weight="700" font-family="Quicksand,sans-serif">Activity A</text>
+    <rect x="54" y="4" width="42" height="26" rx="3" fill="none" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="75" y="14" text-anchor="middle" font-size="5.5" fill="#6B7280" font-family="Quicksand,sans-serif">ALBUM</text>
+    <rect x="57" y="17" width="36" height="10" rx="2" fill="#FEF3C7"/>
+    <text x="75" y="25" text-anchor="middle" font-size="6" fill="#92400E" font-weight="700" font-family="Quicksand,sans-serif">Activity B</text>
+    <rect x="104" y="4" width="42" height="26" rx="3" fill="none" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="125" y="14" text-anchor="middle" font-size="5.5" fill="#6B7280" font-family="Quicksand,sans-serif">ALBUM</text>
+    <rect x="107" y="17" width="36" height="10" rx="2" fill="#DBEAFE"/>
+    <text x="125" y="25" text-anchor="middle" font-size="6" fill="#075985" font-weight="700" font-family="Quicksand,sans-serif">Activity C</text>
+    <!-- location albums right col -->
+    <rect x="154" y="4" width="42" height="26" rx="3" fill="none" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3,2"/>
+    <rect x="157" y="17" width="36" height="10" rx="2" fill="#EDE9FE"/>
+    <text x="175" y="25" text-anchor="middle" font-size="6" fill="#5B21B6" font-weight="700" font-family="Quicksand,sans-serif">Location 1</text>
+    <!-- Grid of tiny project cards -->
+    ${[0,1,2].map(ai=>([0,1,2].map(li=>{
+      const colors=['#9D174D','#92400E','#075985'];
+      const x=4+ai*50, y=38+li*38;
+      return `<rect x="${x}" y="${y}" width="42" height="30" rx="3" fill="none" stroke="#E5E7EB" stroke-width="1"/>
+        <text x="${x+21}" y="${y+10}" text-anchor="middle" font-size="5" fill="#9CA3AF" font-family="Quicksand,sans-serif">PROJECT</text>
+        <rect x="${x+3}" y="${y+12}" width="36" height="15" rx="2" fill="${colors[ai]}"/>
+        <text x="${x+21}" y="${y+20}" text-anchor="middle" font-size="5.5" fill="#fff" font-weight="700" font-family="Quicksand,sans-serif">Act ${String.fromCharCode(65+ai)}</text>
+        <text x="${x+21}" y="${y+26}" text-anchor="middle" font-size="4.5" fill="rgba(255,255,255,0.7)" font-family="Quicksand,sans-serif">Loc ${li+1}</text>`;
+    }).join(''))).join('')}
+  </svg>`;
+}
+
+function render3B() {
+  const acts = wbState.activities;
+  const locs = wbState.locations;
+  return `<div class="activities-table-wrap">
+    <table class="act-table">
+      <colgroup><col style="width:160px"><col style="width:200px"><col style="width:80px">
+        ${locs.map(()=>'<col style="width:100px">').join('')}<col style="width:80px"></colgroup>
+      <thead>
+        <tr>
+          <th class="section-hdr-cell" colspan="3">Activity</th>
+          <th class="section-hdr-cell" colspan="${locs.length+1}">Location</th>
+        </tr>
+        <tr>
+          <th>Name</th><th>Description</th><th>Image</th>
+          ${locs.map(l=>`<th style="text-align:center"><input class="loc-name-input" value="${l.name}" onchange="updateLocName('${l.id}',this.value)"><br><button onclick="removeLoc('${l.id}')" style="background:none;border:none;color:var(--gray-300);cursor:pointer;font-size:10px;margin-top:2px">×</button></th>`).join('')}
+          <th><button class="add-col-btn" onclick="addLocation()">+ Location</button></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${acts.map(a=>`<tr>
+          <td><input class="act-name-input" value="${a.name}" onchange="updateActName('${a.id}',this.value)"></td>
+          <td><input class="act-name-input" style="width:180px;font-weight:400" value="${a.desc}" placeholder="Optional description"></td>
+          <td style="text-align:center"><label class="upload-label" style="font-size:10px">+ img</label></td>
+          ${locs.map(l=>`<td style="text-align:center"><input type="checkbox" ${wbState.activityLocations[a.id+'-'+l.id]?'checked':''} onchange="wbState.activityLocations['${a.id}-${l.id}']=this.checked"></td>`).join('')}
+          <td><button onclick="removeAct('${a.id}')" style="background:none;border:none;color:var(--gray-300);cursor:pointer">×</button></td>
+        </tr>`).join('')}
+        <tr><td colspan="${3+locs.length+1}"><button class="add-row-btn" onclick="addActivity()">+ Add Activity</button></td></tr>
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function addActivity(){const n=`Activity ${String.fromCharCode(65+wbState.activities.length)}`;wbState.activities.push({id:'a'+Date.now(),name:n,desc:'',image:null});switchWbTab(3,'act');}
+function removeAct(id){wbState.activities=wbState.activities.filter(a=>a.id!==id);switchWbTab(3,'act');}
+function updateActName(id,v){const a=wbState.activities.find(a=>a.id===id);if(a)a.name=v;}
+function addLocation(){const n=`Location ${wbState.locations.length+1}`;wbState.locations.push({id:'l'+Date.now(),name:n});switchWbTab(3,'act');}
+function removeLoc(id){wbState.locations=wbState.locations.filter(l=>l.id!==id);switchWbTab(3,'act');}
+function updateLocName(id,v){const l=wbState.locations.find(l=>l.id===id);if(l)l.name=v;}
+
+// ─────────────────────────────────────────────
+// STEP 4 WORKBENCH TABS
+// ─────────────────────────────────────────────
+function getBsClass(bsId) {
+  const map={bs1:'bs-todo',bs2:'bs-inprog',bs3:'bs-review',bs4:'bs-amends',bs5:'bs-approved'};
+  return map[bsId]||'bs-todo';
+}
+function getBsName(bsId) {
+  const s=wbState.buildStatuses.find(b=>b.id===bsId);return s?s.name:'To do';
+}
+
+function render4A() {
+  const mcs = wbState.mcItems;
+  const formLookup = {};
+  wbState.originalForms.forEach(f=>formLookup[f.id]=f.name);
+  return `<div>
+    <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center">
+      <input class="input" placeholder="🔍 Search content, type, status…" style="max-width:300px;font-size:12px" oninput="filter4A(this.value)">
+    </div>
+    <div class="wb-table-wrap" id="build-status-table-wrap">
+      <table class="wb-table" id="build-status-table">
+        <thead><tr>
+          <th class="sticky-col" style="min-width:180px" onclick="sort4A('name')">Makerble Content</th>
+          <th style="min-width:130px" onclick="sort4A('type')">Type</th>
+          <th style="min-width:140px">Original Form(s)</th>
+          <th style="min-width:160px">Link</th>
+          <th style="min-width:120px" onclick="sort4A('status')">Build Status</th>
+          <th style="min-width:120px">Build Ticket</th>
+          <th style="min-width:120px">Build Team</th>
+          <th style="min-width:120px">Builder</th>
+          <th style="min-width:80px">How it works</th>
+        </tr></thead>
+        <tbody>
+          ${mcs.map(m=>{
+            const bsId = wbState.buildStatuses2[m.id]||'bs1';
+            return `<tr>
+              <td class="sticky-col" style="font-weight:700;font-size:12px">${m.name}</td>
+              <td><span class="tag tag-purple" style="font-size:10px">${m.type}</span></td>
+              <td style="font-size:11px">${m.originalForms.map(fid=>`<span class="file-chip" style="cursor:pointer" onclick="updateViewer('${fid}')">${formLookup[fid]||fid}</span>`).join('')||'—'}</td>
+              <td><input class="resp-input" placeholder="https://makerble.com/…" style="width:140px;font-size:11px"></td>
+              <td><select class="select" style="font-size:11px;padding:4px 6px" onchange="wbState.buildStatuses2['${m.id}']=this.value;switchWbTab(4,'bst')">
+                ${wbState.buildStatuses.map(bs=>`<option value="${bs.id}"${bsId===bs.id?' selected':''}>${bs.name}</option>`).join('')}
+              </select></td>
+              <td><input class="resp-input" placeholder="https://jira…" style="width:110px;font-size:11px"></td>
+              <td><select class="select" style="font-size:11px;padding:4px 6px"><option>Client</option><option selected>Makerble Customer Success</option><option>Makerble Inhouse</option></select></td>
+              <td><input class="resp-input" placeholder="Who will build?" style="width:100px;font-size:11px"></td>
+              <td style="text-align:center"><button class="fix-btn">▶ Video</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function render4B() {
+  const projects = [];
+  wbState.activities.forEach(a=>{
+    wbState.locations.forEach(l=>{
+      if(wbState.activityLocations[a.id+'-'+l.id]) projects.push({act:a,loc:l,key:a.id+'-'+l.id});
+    });
+  });
+  const groups = [
+    {label:'Bio Forms',type:'Contact Bio Form'},
+    {label:'Surveys',type:'Survey'},
+    {label:'Project Template',type:'Project Creation Form'},
+    {label:'Event Creation',type:'Event Creation Form'},
+    {label:'Signup Pages',type:'Signup Page'},
+    {label:'Impact Frameworks',type:'Impact Framework'},
+    {label:'Case Forms',type:'Case Form'},
+  ];
+  return `<div>
+    <p style="font-size:12px;color:var(--gray-500);margin-bottom:14px">Tick each cell to assign a piece of Makerble Content to that project. This is a planning view only — no automatic assignment to Makerble yet.</p>
+    <div class="wb-table-wrap">
+      <table class="wb-table">
+        <thead>
+          <tr>
+            <th class="sticky-col" style="min-width:180px" rowspan="2">Project</th>
+            ${groups.map(g=>{const mcs=wbState.mcItems.filter(m=>m.type===g.type);return mcs.length?`<th colspan="${mcs.length}" style="text-align:center;background:#EDE9FE;color:#5B21B6">${g.label}</th>`:'';}).join('')}
+            <th style="min-width:160px" rowspan="2">Default Story Privacy</th>
+          </tr>
+          <tr>
+            ${groups.flatMap(g=>wbState.mcItems.filter(m=>m.type===g.type).map(m=>`<th style="min-width:90px;font-size:10px;text-align:center">${m.name}</th>`)).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${projects.map(p=>`<tr>
+            <td class="sticky-col" style="font-size:12px">
+              <div style="font-weight:700">${p.act.name}</div>
+              <div style="font-size:10px;color:var(--gray-500)">${p.loc.name}</div>
+            </td>
+            ${groups.flatMap(g=>wbState.mcItems.filter(m=>m.type===g.type).map(m=>`<td class="cb-cell"><input type="checkbox"></td>`)).join('')}
+            <td><select class="select" style="font-size:11px;padding:4px 6px"><option>Org Colleagues only</option><option>Project Colleagues only</option><option>Specific Individuals</option></select></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// STEP 5 WORKBENCH TAB
+// ─────────────────────────────────────────────
+function render5A() {
+  const rows = wbState.migrationRows;
+  const projects = [];
+  wbState.activities.forEach(a=>wbState.locations.forEach(l=>{if(wbState.activityLocations[a.id+'-'+l.id])projects.push({key:a.id+'-'+l.id,label:`${a.name} · ${l.name}`});}));
+
+  return `<div>
+    <div class="wb-table-wrap">
+      <table class="wb-table">
+        <thead><tr>
+          <th style="min-width:160px">Upload (CSV)</th>
+          <th style="min-width:160px">Type</th>
+          <th style="min-width:140px">Contact Bio Form</th>
+          <th style="min-width:120px">Survey(s)</th>
+          <th style="min-width:130px">Impact Framework(s)</th>
+          <th style="min-width:70px;text-align:center"># Rows</th>
+          <th style="min-width:160px">Destination(s)</th>
+          <th style="min-width:120px">Import Team</th>
+          <th style="min-width:120px">Importer</th>
+          <th style="min-width:120px">Import Status</th>
+          <th style="min-width:80px">Import</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(r=>`<tr>
+            <td><span class="file-chip">📊 ${r.file}</span></td>
+            <td style="font-size:11px">${r.type.join(', ')}</td>
+            <td style="font-size:11px">${r.bioForms.map(id=>{const m=wbState.mcItems.find(m=>m.id===id);return m?`<span class="mc-name-chip" style="font-size:10px">${m.name}</span>`:'';}).join('')||'—'}</td>
+            <td style="font-size:11px">${r.surveys.map(id=>{const m=wbState.mcItems.find(m=>m.id===id);return m?`<span class="mc-name-chip" style="font-size:10px">${m.name}</span>`:'';}).join('')||'—'}</td>
+            <td style="font-size:11px">${r.frameworks.map(id=>{const m=wbState.mcItems.find(m=>m.id===id);return m?`<span class="mc-name-chip" style="font-size:10px">${m.name}</span>`:'';}).join('')||'—'}</td>
+            <td style="text-align:center;font-weight:700;font-size:12px">${r.rows}</td>
+            <td style="font-size:11px">${r.destinations.map(d=>{const p=projects.find(p=>p.key===d);return p?`<span class="tag tag-gray" style="font-size:10px;margin:1px">${p.label}</span>`:'';}).join('')}</td>
+            <td><select class="select" style="font-size:11px;padding:4px 6px"><option ${r.team==='Client'?'selected':''}>Client</option><option ${r.team==='Makerble Customer Success'?'selected':''}>Makerble Customer Success</option><option ${r.team==='Makerble Inhouse'?'selected':''}>Makerble Inhouse</option></select></td>
+            <td><input class="resp-input" value="${r.importer}" style="width:100px;font-size:11px"></td>
+            <td><select class="select" style="font-size:11px;padding:4px 6px">
+              ${wbState.buildStatuses.map(bs=>`<option value="${bs.id}"${r.status===bs.id?' selected':''}>${bs.name}</option>`).join('')}
+            </select></td>
+            <td><button class="btn btn-primary btn-sm" onclick="window.open('https://www.makerble.com/record_importer/new','_blank')" style="font-size:10px">Import ↗</button></td>
+          </tr>`).join('')}
+          <tr><td colspan="11"><button class="add-row-btn" onclick="addMigrationRow()">+ Add import</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function addMigrationRow(){wbState.migrationRows.push({id:'mr'+Date.now(),file:'',type:[],bioForms:[],surveys:[],frameworks:[],rows:0,destinations:[],team:'Client',importer:'',status:'bs1'});switchWbTab(5,'mig');}
+
+// ─────────────────────────────────────────────
+// STEP 6 WORKBENCH TABS
+// ─────────────────────────────────────────────
+function render6A() {
+  const ugs = wbState.userGroups;
+  return `<div class="scenarios-wrap">
+    <div class="wb-table-wrap">
+      <table class="wb-table">
+        <thead>
+          <tr>
+            <th class="sticky-col" style="min-width:260px">Scenario</th>
+            <th style="min-width:80px">Est. Time</th>
+            <th style="min-width:80px">Video</th>
+            <th style="min-width:80px">Tour</th>
+            ${ugs.map(ug=>`<th style="min-width:100px;text-align:center">${ug}</th>`).join('')}
+            <th><button class="add-col-btn" onclick="addUserGroup()">+ User Group</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${wbState.scenarios.map(s=>`<tr>
+            <td class="sticky-col" style="font-size:12px;font-weight:600;line-height:1.4">${s.desc}</td>
+            <td><input class="resp-input" value="${s.estTime}" style="width:60px;text-align:center;font-weight:700"></td>
+            <td style="text-align:center">${s.video?`<a href="${s.video}" target="_blank" style="font-size:11px;color:var(--green)">▶ Watch</a>`:`<label class="upload-label" style="font-size:10px">+ Add</label>`}</td>
+            <td style="text-align:center">${s.tour?`<a href="${s.tour}" target="_blank" style="font-size:11px;color:var(--green)">🔗 Tour</a>`:`<input class="resp-input" placeholder="Tour URL" style="width:70px;font-size:10px">`}</td>
+            ${ugs.map(ug=>`<td class="cb-cell"><input type="checkbox" ${s.userGroups[ug]?'checked':''} onchange="wbState.scenarios.find(x=>x.id==='${s.id}').userGroups['${ug}']=this.checked"></td>`).join('')}
+            <td></td>
+          </tr>`).join('')}
+          <tr><td colspan="${4+ugs.length+1}"><button class="add-row-btn" onclick="addScenario()">+ Add scenario</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function addUserGroup(){const n=prompt('Name this User Group (e.g. Case Workers):');if(n&&n.trim()){wbState.userGroups.push(n.trim());wbState.scenarios.forEach(s=>s.userGroups[n.trim()]=false);switchWbTab(6,'scn');}}
+function addScenario(){wbState.scenarios.push({id:'s'+Date.now(),desc:'New scenario',estTime:'00:15',video:'',tour:'',userGroups:Object.fromEntries(wbState.userGroups.map(g=>[g,false]))});switchWbTab(6,'scn');}
+
+function render6B() {
+  const ugs = wbState.userGroups;
+  const totals = {};
+  ugs.forEach(ug=>{
+    totals[ug]={people:0,champs:0};
+    wbState.people.forEach(p=>{if(p.groups[ug]){totals[ug].people++;if(p.champion)totals[ug].champs++;}});
+  });
+  const uniqueChamps = wbState.people.filter(p=>p.champion).length;
+  return `<div>
+    <div class="info-bar" style="margin-bottom:16px">👑 ${uniqueChamps} unique Champion${uniqueChamps!==1?'s':''} across this programme</div>
+    <div class="wb-table-wrap">
+      <table class="wb-table">
+        <thead>
+          <tr>
+            <th class="sticky-col" style="min-width:160px">Name</th>
+            <th style="min-width:180px">Email</th>
+            <th style="min-width:120px">Location</th>
+            <th style="min-width:80px;text-align:center">Champion</th>
+            ${ugs.map(ug=>`<th style="min-width:100px;text-align:center">
+              <span class="ug-totaliser">${totals[ug].people} people · ${totals[ug].champs} 🏆</span>
+              ${ug}
+            </th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${wbState.people.map(p=>`<tr>
+            <td class="sticky-col" style="font-weight:700;font-size:12px">${p.name}${p.champion?' 🏆':''}</td>
+            <td style="font-size:11px;color:var(--gray-500)">${p.email}</td>
+            <td style="font-size:11px">${p.location}</td>
+            <td class="cb-cell"><input type="checkbox" ${p.champion?'checked':''} onchange="wbState.people.find(x=>x.id==='${p.id}').champion=this.checked;switchWbTab(6,'ugp')"></td>
+            ${ugs.map(ug=>`<td class="cb-cell"><input type="checkbox" ${p.groups[ug]?'checked':''} onchange="wbState.people.find(x=>x.id==='${p.id}').groups['${ug}']=this.checked;switchWbTab(6,'ugp')"></td>`).join('')}
+          </tr>`).join('')}
+          <tr><td colspan="${4+ugs.length}"><button class="add-row-btn" onclick="addPerson()">+ Add person</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function addPerson(){const n=prompt('Full name:');if(!n)return;const e=prompt('Email:');if(!e)return;wbState.people.push({id:'p'+Date.now(),name:n,email:e,location:'',champion:false,groups:Object.fromEntries(wbState.userGroups.map(g=>[g,false]))});switchWbTab(6,'ugp');}
+
+function render6C() {
+  return `<div>
+    <p style="font-size:12px;color:var(--gray-500);margin-bottom:16px">Champion testing feedback per scenario — reviewed in the onboarding session by Makerble staff and the client's Onboarding Team.</p>
+    ${wbState.scenarios.map(s=>{
+      const champions = wbState.people.filter(p=>p.champion&&wbState.userGroups.some(ug=>p.groups[ug]&&s.userGroups[ug]));
+      const fbData = wbState.championFeedback[s.id]||{};
+      return `<div class="card" style="margin-bottom:16px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:12px">${s.desc}</div>
+        ${champions.length===0?`<div style="font-size:12px;color:var(--gray-400);font-style:italic">No champions assigned to this scenario's user groups yet.</div>`:`
+        <table class="wb-table">
+          <thead><tr><th>Champion</th><th>Testing Status</th><th>Details of Amends</th><th>Any Other Feedback</th></tr></thead>
+          <tbody>
+            ${champions.map(p=>{
+              const fb=fbData[p.id]||{status:'Not tested',amends:'',other:''};
+              const statusColor={Approved:'var(--green-l)','Amends needed':'#FEE2E2','Testing in progress':'var(--amber-l)','Not tested':'var(--gray-100)'};
+              return `<tr>
+                <td style="font-weight:600;font-size:12px">${p.name}${p.champion?' 🏆':''}</td>
+                <td><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${statusColor[fb.status]||'var(--gray-100)'}">${fb.status}</span></td>
+                <td style="font-size:12px;color:var(--gray-700)">${fb.amends||'<span style="color:var(--gray-400);font-style:italic">None</span>'}</td>
+                <td style="font-size:12px;color:var(--gray-700)">${fb.other||'<span style="color:var(--gray-400);font-style:italic">None</span>'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>`}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// STEP 7 WORKBENCH TABS
+// ─────────────────────────────────────────────
+function hhmmToMins(hhmm){if(!hhmm)return 0;const[h,m]=hhmm.split(':').map(Number);return(h||0)*60+(m||0);}
+function minsToHHMM(m){const h=Math.floor(m/60);const mn=m%60;return`${String(h).padStart(2,'0')}:${String(mn).padStart(2,'0')}`;}
+
+function render7A() {
+  const mods = wbState.trainingModules;
+  const modTotals = {};
+  mods.forEach(mod=>{
+    modTotals[mod]=0;
+    wbState.scenarios.forEach(s=>{if(wbState.moduleAssignments[s.id+'-'+mod])modTotals[mod]+=hhmmToMins(s.estTime);});
+  });
+  return `<div class="wb-table-wrap">
+    <table class="wb-table">
+      <thead>
+        <tr>
+          <th class="sticky-col" style="min-width:260px">Scenario</th>
+          <th style="min-width:70px;text-align:center">Est. Time</th>
+          ${mods.map(mod=>`<th style="min-width:130px;text-align:center">
+            <div style="font-size:10px;color:var(--green-d);font-weight:700;margin-bottom:2px">⏱ ${minsToHHMM(modTotals[mod])}</div>
+            ${mod}
+          </th>`).join('')}
+          <th><button class="add-col-btn" onclick="addModule()">+ Module</button></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${wbState.scenarios.map(s=>`<tr>
+          <td class="sticky-col" style="font-size:12px;font-weight:600;line-height:1.4">${s.desc}</td>
+          <td style="text-align:center;font-size:11px;font-weight:700;color:var(--gray-500)">${s.estTime}</td>
+          ${mods.map(mod=>`<td class="cb-cell"><input type="checkbox" ${wbState.moduleAssignments[s.id+'-'+mod]?'checked':''} onchange="wbState.moduleAssignments['${s.id}-${mod}']=this.checked;switchWbTab(7,'trm')"></td>`).join('')}
+          <td></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function addModule(){const n=prompt('Module name (e.g. Module 4: Administration):');if(n&&n.trim()){wbState.trainingModules.push(n.trim());switchWbTab(7,'trm');}}
+
+function render7B() {
+  const sessions = wbState.trainingSessions;
+  return `<div>
+    <div class="wb-table-wrap">
+      <table class="wb-table">
+        <thead><tr>
+          <th style="min-width:160px">When</th>
+          <th style="min-width:160px">Module(s)</th>
+          <th style="min-width:90px;text-align:center">Training Time</th>
+          <th style="min-width:120px">User Group</th>
+          <th style="min-width:180px">People</th>
+        </tr></thead>
+        <tbody>
+          ${sessions.map(sess=>{
+            const sessionMins = sess.start&&sess.end ? Math.max(0,Math.round((new Date('1970-01-01 '+sess.end.split(' ')[1])-new Date('1970-01-01 '+sess.start.split(' ')[1]))/60000)) : 0;
+            const contentMins = sess.modules.reduce((sum,mod)=>{return sum+wbState.scenarios.filter(s=>wbState.moduleAssignments[s.id+'-'+mod]).reduce((s2,sc)=>s2+hhmmToMins(sc.estTime),0);},0);
+            const timeClass = sessionMins>=contentMins?'time-ok':'time-bad';
+            const people = sess.people.map(pid=>wbState.people.find(p=>p.id===pid)).filter(Boolean);
+            return `<tr>
+              <td style="font-size:11px">
+                <div style="font-weight:600">${sess.start}</div>
+                <div style="color:var(--gray-500)">to ${sess.end}</div>
+              </td>
+              <td style="font-size:11px">${sess.modules.map(m=>`<span class="tag tag-purple" style="font-size:10px;margin:1px">${m}</span>`).join('')}</td>
+              <td style="text-align:center">
+                <span class="${timeClass}">${minsToHHMM(contentMins)}</span>
+                <div style="font-size:9px;color:var(--gray-400)">slot: ${minsToHHMM(sessionMins)}</div>
+              </td>
+              <td style="font-size:12px;font-weight:600">${sess.userGroup}</td>
+              <td style="font-size:11px">
+                ${people.map(p=>`<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px"><span class="avatar" style="width:20px;height:20px;font-size:8px;border-radius:50%">${p.name[0]}</span>${p.name}</div>`).join('')}
+                ${people.length>10?`<div class="warn-bar" style="font-size:10px;margin-top:4px;padding:4px 8px">⚠ More than 10 people — consider splitting this session</div>`:''}
+              </td>
+            </tr>`;
+          }).join('')}
+          <tr><td colspan="5"><button class="add-row-btn" onclick="addTrainingSession()">+ Add session</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function addTrainingSession(){wbState.trainingSessions.push({id:'ts'+Date.now(),start:'2026-08-01 09:00',end:'2026-08-01 11:00',modules:[],userGroup:'',people:[]});switchWbTab(7,'trc');}
+
+// ─────────────────────────────────────────────
+// STEP 8 WORKBENCH TAB
+// ─────────────────────────────────────────────
+function render8A() {
+  const buildTotal = wbState.mcItems.length;
+  const buildApproved = Object.values(wbState.buildStatuses2).filter(s=>s==='bs5').length;
+  const buildPct = buildTotal?Math.round((buildApproved/buildTotal)*100):0;
+
+  const importTotal = wbState.migrationRows.length;
+  const importApproved = wbState.migrationRows.filter(r=>r.status==='bs5').length;
+  const importPct = importTotal?Math.round((importApproved/importTotal)*100):0;
+
+  const ugs = wbState.userGroups;
+  const ugTrainingPct = {};
+  ugs.forEach(ug=>{
+    const ugPeople = wbState.people.filter(p=>p.groups[ug]);
+    if(!ugPeople.length){ugTrainingPct[ug]=100;return;}
+    const trained = ugPeople.filter(p=>wbState.trainingSessions.some(sess=>sess.userGroup===ug&&sess.people.includes(p.id))).length;
+    ugTrainingPct[ug]=Math.round((trained/ugPeople.length)*100);
+  });
+  const overallTrainPct = ugs.length?Math.round(Object.values(ugTrainingPct).reduce((s,v)=>s+v,0)/ugs.length):0;
+
+  const colorForPct = p => p>=80?'var(--green)':p>=40?'var(--amber)':'#EF4444';
+
+  return `<div>
+    <div class="launch-summary-grid">
+      <div class="launch-card">
+        <div class="launch-pct" style="color:${colorForPct(buildPct)}">${buildPct}%</div>
+        <div class="launch-label">Build Complete</div>
+        <div class="big-progress"><div class="big-progress-fill" style="width:${buildPct}%;background:${colorForPct(buildPct)}"></div></div>
+        <div style="font-size:11px;color:var(--gray-400)">${buildApproved} of ${buildTotal} items approved</div>
+      </div>
+      <div class="launch-card">
+        <div class="launch-pct" style="color:${colorForPct(importPct)}">${importPct}%</div>
+        <div class="launch-label">Imports Complete</div>
+        <div class="big-progress"><div class="big-progress-fill" style="width:${importPct}%;background:${colorForPct(importPct)}"></div></div>
+        <div style="font-size:11px;color:var(--gray-400)">${importApproved} of ${importTotal} imports approved</div>
+      </div>
+      <div class="launch-card">
+        <div class="launch-pct" style="color:${colorForPct(overallTrainPct)}">${overallTrainPct}%</div>
+        <div class="launch-label">Team Trained</div>
+        <div class="big-progress"><div class="big-progress-fill" style="width:${overallTrainPct}%;background:${colorForPct(overallTrainPct)}"></div></div>
+        <div style="font-size:11px;color:var(--gray-400)">Average across ${ugs.length} user groups</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 style="font-size:14px;font-weight:700;margin-bottom:14px">Training by User Group</h2>
+      ${ugs.map(ug=>`<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:12px;font-weight:600">${ug}</span>
+          <span style="font-size:12px;font-weight:700;color:${colorForPct(ugTrainingPct[ug])}">${ugTrainingPct[ug]}%</span>
+        </div>
+        <div class="big-progress" style="height:8px"><div class="big-progress-fill" style="width:${ugTrainingPct[ug]}%;background:${colorForPct(ugTrainingPct[ug])}"></div></div>
+      </div>`).join('')}
+    </div>
+    ${buildPct===100&&importPct===100&&overallTrainPct===100?`<div class="info-bar" style="margin-top:20px;font-size:14px">🎉 All systems go! You're ready for go-live.</div>`:
+    `<div class="warn-bar" style="margin-top:20px">⚠ Not yet ready for go-live. ${buildPct<100?`Build: ${100-buildPct}% remaining. `:''}${importPct<100?`Imports: ${100-importPct}% remaining. `:''}${overallTrainPct<100?`Training: ${100-overallTrainPct}% remaining.`:''}</div>`}
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// ORG SETTINGS — BUILD STATUS CONFIG
+// ─────────────────────────────────────────────
+function renderOrgSettings() {
+  return `<div class="main" style="max-width:700px">
+    <button class="nav-back" onclick="nav('org')">← Back to Org</button>
+    <div class="page-header">
+      <div class="page-title">Organisation Settings</div>
+      <div class="page-sub">Super User only — configure build statuses and org-wide preferences</div>
+    </div>
+    <div class="card">
+      <div class="section-hdr">
+        <h2 style="font-size:14px">Build Status Options</h2>
+        <button class="btn btn-primary btn-sm" onclick="addBuildStatus()">+ Add status</button>
+      </div>
+      <p style="font-size:12px;color:var(--gray-500);margin-bottom:16px">These statuses are used for both Build Status (Step 4) and Import Status (Step 5). Drag to reorder.</p>
+      <div id="build-status-config-list">
+        ${wbState.buildStatuses.map((bs,i)=>`<div class="status-config-row" draggable="true">
+          <span class="status-drag-handle">⠿</span>
+          <div class="status-color-swatch" style="background:${bs.color}" onclick="changeBsColor('${bs.id}','${bs.color}')"></div>
+          <input class="status-name-input" value="${bs.name}" onchange="wbState.buildStatuses.find(b=>b.id==='${bs.id}').name=this.value">
+          <span class="tag ${getBsClass(bs.id)}" style="font-size:10px">${bs.name}</span>
+          ${wbState.buildStatuses.length>1?`<button class="btn-ghost" style="color:var(--red);font-size:11px" onclick="removeBuildStatus('${bs.id}')">Remove</button>`:''}
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function addBuildStatus(){const n=prompt('Status name:');if(!n)return;const c=prompt('Hex colour (e.g. #8B5CF6):')||'#9CA3AF';wbState.buildStatuses.push({id:'bs'+Date.now(),name:n.trim(),color:c});document.getElementById('build-status-config-list').outerHTML=renderOrgSettings();}
+function removeBuildStatus(id){if(confirm('Remove this status?')){wbState.buildStatuses=wbState.buildStatuses.filter(b=>b.id!==id);nav('org-settings');}}
+function changeBsColor(id,cur){const c=prompt('New hex colour:',cur);if(c){wbState.buildStatuses.find(b=>b.id===id).color=c;nav('org-settings');}}
+
+</script>
+</body>
+</html>
