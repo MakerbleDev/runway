@@ -401,6 +401,19 @@ body{font-family:var(--font);font-size:14px;background:var(--gray-50);color:var(
 .feedback-textarea{width:100%;border:1px solid var(--gray-200);border-radius:var(--r-md);padding:8px;font-size:12px;font-family:var(--font);min-height:60px;resize:vertical}
 .feedback-textarea:focus{outline:none;border-color:var(--green)}
 
+
+/* UNIFIED WORKBENCH TAB BAR */
+.wb-unified-tabs{display:flex;overflow-x:auto;border-bottom:2px solid var(--gray-200);margin-bottom:24px;gap:0;scrollbar-width:none;-ms-overflow-style:none;background:#fff;position:sticky;top:52px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.wb-unified-tabs::-webkit-scrollbar{display:none}
+.wb-unified-tab-group{display:flex;flex-direction:column;flex-shrink:0}
+.wb-unified-tab-group-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-400);padding:6px 12px 2px;white-space:nowrap}
+.wb-unified-tab-group-tabs{display:flex}
+.wb-unified-tab{padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-500);border-bottom:3px solid transparent;margin-bottom:-2px;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font);transition:color 0.12s;white-space:nowrap;flex-shrink:0}
+.wb-unified-tab:hover:not(.active){color:var(--gray-900);background:var(--gray-50)}
+.wb-unified-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.wb-unified-tab-divider{width:1px;background:var(--gray-200);margin:8px 0;flex-shrink:0}
+.wb-content-pane{min-height:300px}
+
 </style>
 </head>
 <body>
@@ -1109,6 +1122,7 @@ function renderProg() {
 function setView(v) {
   document.getElementById('view-full').style.display = v==='full' ? 'block' : 'none';
   document.getElementById('view-workbench').style.display = v==='workbench' ? 'block' : 'none';
+  if (v === 'workbench') { window.wbUnifiedActiveTab = null; renderWorkbenchView(); }
   document.getElementById('view-btn-full').classList.toggle('active', v==='full');
   document.getElementById('view-btn-wb').classList.toggle('active', v==='workbench');
 }
@@ -1304,11 +1318,108 @@ function renderResourcesTab(template) {
 // ─────────────────────────────────────────────
 function renderWorkbenchView() {
   const container = document.getElementById('workbench-content');
-  container.innerHTML = STEP_TEMPLATES.map(t => `
-    <div class="wb-section">
-      <div class="wb-section-hdr">Step ${t.pos}: ${t.title}</div>
-      ${renderWorkbenchTab(t)}
-    </div>`).join('');
+
+  // Build flat list of all tabs across all steps
+  const tabConfigs = getWbTabConfigs();
+  const allTabs = [];
+  STEP_TEMPLATES.forEach(t => {
+    const tabs = tabConfigs[t.pos];
+    if (tabs) tabs.forEach(tab => allTabs.push({...tab, stepPos: t.pos, stepTitle: t.title}));
+  });
+
+  // Determine active tab (default to first)
+  if (!window.wbUnifiedActiveTab) window.wbUnifiedActiveTab = allTabs[0].id + '-' + allTabs[0].stepPos;
+  const activeKey = window.wbUnifiedActiveTab;
+
+  // Group tabs by step for the header labels
+  const groups = STEP_TEMPLATES.map(t => ({
+    stepPos: t.pos,
+    stepTitle: t.title,
+    tabs: (tabConfigs[t.pos] || []).map(tab => ({...tab, stepPos: t.pos}))
+  })).filter(g => g.tabs.length > 0);
+
+  const tabBarHtml = `<div class="wb-unified-tabs">
+    ${groups.map((g, gi) => `
+      ${gi > 0 ? '<div class="wb-unified-tab-divider"></div>' : ''}
+      <div class="wb-unified-tab-group">
+        <div class="wb-unified-tab-group-label">Step ${g.stepPos}: ${g.stepTitle.replace(/^What's|^What are|^How do|^Create our|^Import the|^Select|^Decide who|^Set a /,'').trim()}</div>
+        <div class="wb-unified-tab-group-tabs">
+          ${g.tabs.map(tab => {
+            const key = tab.id + '-' + tab.stepPos;
+            return `<button class="wb-unified-tab${activeKey===key?' active':''}" onclick="switchUnifiedWbTab('${tab.id}',${tab.stepPos})">${tab.label}</button>`;
+          }).join('')}
+        </div>
+      </div>
+    `).join('')}
+  </div>
+  <div class="wb-content-pane" id="wb-unified-content"></div>`;
+
+  container.innerHTML = tabBarHtml;
+
+  // Render the active tab content
+  renderUnifiedWbContent(activeKey, allTabs, tabConfigs);
+}
+
+function renderUnifiedWbContent(activeKey, allTabs, tabConfigs) {
+  const tc = tabConfigs || getWbTabConfigs();
+  const flatTabs = allTabs || [];
+  const active = flatTabs.find(t => (t.id + '-' + t.stepPos) === activeKey);
+  const pane = document.getElementById('wb-unified-content');
+  if (!pane || !active) return;
+
+  // Show step label above content
+  const template = STEP_TEMPLATES.find(t => t.pos === active.stepPos);
+  pane.innerHTML = `
+    <div style="margin-bottom:16px">
+      <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-400)">Step ${active.stepPos}: ${template ? template.title : ''}</span>
+    </div>
+    <div>${active.fn()}</div>
+  `;
+}
+
+function switchUnifiedWbTab(tabId, stepPos) {
+  window.wbUnifiedActiveTab = tabId + '-' + stepPos;
+  renderWorkbenchView();
+}
+
+function getWbTabConfigs() {
+  return {
+    1: [
+      {id:'pj',label:'Participant Journey',fn:()=>renderParticipantJourney()},
+      {id:'of',label:'Original Forms',fn:()=>renderOriginalForms()},
+      {id:'ch',label:'Challenges',fn:()=>renderChallenges()},
+      {id:'cr',label:'Content Required',fn:()=>renderContentRequired()},
+    ],
+    2: [
+      {id:'rr',label:'Reporting Requirements',fn:()=>render2A()},
+      {id:'rt',label:'Requirements per Report',fn:()=>render2B()},
+      {id:'cc',label:'Cross Check',fn:()=>render2C()},
+      {id:'dem',label:'Demographics',fn:()=>render2D()},
+    ],
+    3: [
+      {id:'mdl',label:'Pick your model',fn:()=>render3A()},
+      {id:'act',label:'Activities',fn:()=>render3B()},
+    ],
+    4: [
+      {id:'bst',label:'Build Status',fn:()=>render4A()},
+      {id:'pld',label:'Platform Designer',fn:()=>render4B()},
+    ],
+    5: [
+      {id:'mig',label:'Migration Plan',fn:()=>render5A()},
+    ],
+    6: [
+      {id:'scn',label:'Scenarios',fn:()=>render6A()},
+      {id:'ugp',label:'User Groups',fn:()=>render6B()},
+      {id:'fbs',label:'Feedback per Scenario',fn:()=>render6C()},
+    ],
+    7: [
+      {id:'trm',label:'Training Modules',fn:()=>render7A()},
+      {id:'trc',label:'Training Calendar',fn:()=>render7B()},
+    ],
+    8: [
+      {id:'lrn',label:'Launch Readiness',fn:()=>render8A()},
+    ],
+  };
 }
 
 // ─────────────────────────────────────────────
@@ -1792,24 +1903,26 @@ function renderWorkbenchTab(template) {
   const tabs = tabConfigs[template.pos];
   if (!tabs) return `<div class="empty-state" style="padding:28px"><div class="empty-state-icon">🔧</div><p style="color:var(--gray-500);font-size:13px">Workbench tools for this step are coming soon.</p></div>`;
 
-  const containerId = `wb-tab-content-${template.pos}`;
   const activeKey = `wbActiveTab_${template.pos}`;
   if (!window[activeKey]) window[activeKey] = tabs[0].id;
+  const activeTab = tabs.find(t=>t.id===window[activeKey]) || tabs[0];
 
+  // In Full View accordion: show per-step subtab bar + content
   return `<div class="subtabs" id="wb-subtabs-${template.pos}">
     ${tabs.map(t => `<button class="subtab${window[activeKey]===t.id?' active':''}" onclick="switchWbTab(${template.pos},'${t.id}')">${t.label}</button>`).join('')}
   </div>
-  <div id="${containerId}">
-    ${tabs.find(t=>t.id===window[activeKey]).fn()}
+  <div id="wb-tab-content-${template.pos}">
+    ${activeTab.fn()}
   </div>`;
 }
 
 function switchWbTab(stepPos, tabId) {
   const key = `wbActiveTab_${stepPos}`;
   window[key] = tabId;
-  // Re-render the whole step body
+  // Sync the unified workbench tab tracker too
+  window.wbUnifiedActiveTab = tabId + '-' + stepPos;
+  // Re-render the step body (for Full View accordion context)
   const template = STEP_TEMPLATES.find(t=>t.pos===stepPos);
-  const step = currentProg.steps.find(s=>s.templateId===template.id);
   setStepTab(template.id, 'Workbench');
 }
 
